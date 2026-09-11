@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec4c5e1558026e447b7ab275ef4a515a, type: 3}
+  m_Name: Start
+  m_EditorClassIdentifier: Assembly-CSharp::StaticSceneAsset
+  value: Start
+  sceneAsset: {fileID: 102900000, guid: bd6aa9556b7e1c44988fce4d201a8dff, type: 3}

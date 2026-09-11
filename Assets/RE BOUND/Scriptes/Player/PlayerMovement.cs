@@ -1,8 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(PolygonCollider2D))]
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D _rb;
@@ -10,10 +9,10 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 _dragStart;
     private Vector2 _dragEnd;
-
-    [SerializeField] private float _moveSpeed;
-    [SerializeField] private float _rotateSpeed;
-    [SerializeField] private Enum_RotationMode _rotationMode;
+    [SerializeField] private PlayerManager _playerManager;
+    private float _moveSpeed;
+    private float _rotateSpeed;
+    private Enum_RotationMode _rotationMode;
 
     private bool _isDragging;
     private bool _isLaunched;
@@ -37,6 +36,11 @@ public class PlayerMovement : MonoBehaviour
 
         transform.SetPositionAndRotation(startPos, Quaternion.identity);
 
+        if(gameObject.activeSelf == false)
+        {
+            gameObject.SetActive(true);
+        }
+
         NULLCHECK();
     }
 
@@ -49,14 +53,19 @@ public class PlayerMovement : MonoBehaviour
     }
     private void NULLCHECK()
     {
-        if(_rb == null)
+        if (_rb == null)
         {
-            Debug.LogWarning($"{this.name} : {_rb.name} dosen't exist");
+            Debug.LogWarning($"{name} : Rigidbody2D not found");
         }
 
         if (_mainCamera == null)
         {
-            Debug.LogWarning($"{this.name} : {_mainCamera.name} dosen't exist");
+            Debug.LogWarning($"{name} : MainCamera not found");
+        }
+
+        if (_playerManager == null)
+        {
+            Debug.LogWarning($"{name} : PlayerManager not found");
         }
     }
     #endregion
@@ -80,13 +89,11 @@ public class PlayerMovement : MonoBehaviour
     #region INPUT
     private void HandleInput()
     {
-        if (_isLaunched)
-            return;
+        if (_isLaunched) return;
 
         var mouse = Mouse.current;
 
-        if (mouse == null)
-            return;
+        if (mouse == null) return;
 
         if (mouse.leftButton.wasPressedThisFrame)
         {
@@ -94,9 +101,19 @@ public class PlayerMovement : MonoBehaviour
             _isDragging = true;
         }
 
+        if(_isDragging)
+        {
+            Vector2 direction = _dragStart - GetMouseWorldPosition();
+
+            _playerManager.DrawPredictionLine(transform.position, direction);
+        }
+
         if (mouse.leftButton.wasReleasedThisFrame && _isDragging)
         {
+
             _dragEnd = GetMouseWorldPosition();
+
+            _playerManager.HidePredictionLine();
 
             Launch();
 
