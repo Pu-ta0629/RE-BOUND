@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
 
     public void UnlockStage(int stageID)
     {
-        if (stageID <= MaxUnlockStage)
+        if (stageID < MaxUnlockStage)
             return;
 
         MaxUnlockStage = stageID;

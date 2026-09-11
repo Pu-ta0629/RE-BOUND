@@ -18,5 +18,5 @@ MonoBehaviour:
   GoalPos: {x: -6, y: 0}
   PlayerType: 1
   MoveSpeed: 15
-  RotationMode: 1
+  RotationMode: 0
   RotateSpeed: 360
