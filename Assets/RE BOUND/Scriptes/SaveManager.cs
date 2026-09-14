@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Xml.Serialization;
 using UnityEditor.Overlays;
 using UnityEngine;
 
@@ -47,6 +48,33 @@ public class SaveManager : MonoBehaviour
         Save(data);
 
         return data;
+    }
+
+    public void UpdateBestBounce(int stageID, int bounceCount)
+    {
+        SaveData data = Load();
+
+        StageRecord stageRecord = data.StageRecords.Find(x => x.StageID == stageID);
+
+        if (stageRecord == null)
+        {
+            stageRecord = new StageRecord()
+            {
+                StageID = stageID,
+                BestBounceCount = bounceCount
+            };
+
+            data.StageRecords.Add(stageRecord);
+        }
+        else
+        {
+            if (bounceCount < stageRecord.BestBounceCount)
+            {
+                stageRecord.BestBounceCount = bounceCount;
+            }
+        }
+
+        Save(data);
     }
 
     private SaveData CreateDefaultData()

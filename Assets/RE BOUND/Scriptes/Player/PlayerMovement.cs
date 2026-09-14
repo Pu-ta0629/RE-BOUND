@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,15 +6,21 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D _rb;
     private Camera _mainCamera;
 
-    private Vector2 _dragStart;
-    private Vector2 _dragEnd;
     [SerializeField] private PlayerManager _playerManager;
+    [SerializeField] private float _minDragDistance = 1;
+
+    [Header("Debug")]
+    [SerializeField] private Vector2 _dragStart;
+    [SerializeField] private Vector2 _dragEnd;
     private float _moveSpeed;
     private float _rotateSpeed;
     private Enum_RotationMode _rotationMode;
 
     private bool _isDragging;
     private bool _isLaunched;
+
+    private int _bounceCount;
+    public int BounceCount => _bounceCount;
 
     public bool IsLaunched => _isLaunched;
 
@@ -30,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
 
         _isDragging = false;
         _isLaunched = false;
+
+        _bounceCount = 0;
 
         _rb.linearVelocity = Vector2.zero;
         _rb.angularVelocity = _rotationMode == Enum_RotationMode.Constant ? _rotateSpeed : 0f;
@@ -84,6 +91,11 @@ public class PlayerMovement : MonoBehaviour
         MaintainSpeed();
         HandleRotation();
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        _bounceCount++;
+    }
     #endregion
 
     #region INPUT
@@ -101,11 +113,18 @@ public class PlayerMovement : MonoBehaviour
             _isDragging = true;
         }
 
-        if(_isDragging)
+        if (_isDragging)
         {
             Vector2 direction = _dragStart - GetMouseWorldPosition();
 
-            _playerManager.DrawPredictionLine(transform.position, direction);
+            if (IsValidDrag(direction))
+            {
+                _playerManager.DrawPredictionLine(transform.position, direction);
+            }
+            else
+            {
+                _playerManager.HidePredictionLine();
+            }
         }
 
         if (mouse.leftButton.wasReleasedThisFrame && _isDragging)
@@ -132,7 +151,8 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 direction = _dragStart - _dragEnd;
 
-        if (direction.sqrMagnitude < 0.01f) return;
+        //if (direction.sqrMagnitude < 0.01f) return;
+        if (!IsValidDrag(direction)) return;
 
         _rb.linearVelocity = direction.normalized * _moveSpeed;
 
@@ -142,6 +162,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         _isLaunched = true;
+    }
+
+    private bool IsValidDrag(Vector2 direction)
+    {
+        return direction.sqrMagnitude >= _minDragDistance * _minDragDistance;
     }
 
     private void MaintainSpeed()

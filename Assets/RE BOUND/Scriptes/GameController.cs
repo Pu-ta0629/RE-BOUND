@@ -11,6 +11,9 @@ public class GameController : MonoBehaviour
     [SerializeField] private PlayerManager _playerManager;
     [SerializeField] private GimmickManager _gimmickManager;
     [SerializeField] private Button _retryButton;
+    public StageManager StageManager => _stageManager;
+    public PlayerManager PlayerManager => _playerManager;
+    public GimmickManager GimmickManager => _gimmickManager;
 
     private bool _isPlaying = true;
 
@@ -59,6 +62,11 @@ public class GameController : MonoBehaviour
         {
             ActiveEvent();
         }
+
+        if(Keyboard.current.rKey.wasPressedThisFrame)
+        {
+            Retry();
+        }
     }
 
     #region Retry
@@ -74,6 +82,9 @@ public class GameController : MonoBehaviour
 
     public void NextStage()
     {
+        int bounceCount = _playerManager.Player.BounceCount;
+        GameManager.Instance.SaveManager.UpdateBestBounce(GameManager.Instance.CurrentStageID, bounceCount);
+
         int nextStage = GameManager.Instance.CurrentStageID + 1;
 
         if (!_stageManager.IsExistStage(nextStage))

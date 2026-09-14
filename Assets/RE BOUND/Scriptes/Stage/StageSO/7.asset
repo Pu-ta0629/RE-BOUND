@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageData
   StageName: 7
   StageID: 7
-  StartPos: {x: -8, y: 4}
+  StartPos: {x: -7, y: 3}
   GoalPos: {x: 8, y: 4}
   PlayerType: 1
   MoveSpeed: 15

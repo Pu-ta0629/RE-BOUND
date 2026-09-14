@@ -12,6 +12,7 @@ public class PlayerManager : MonoBehaviour
 
     [Header("Player")]
     [SerializeField] private PlayerMovement _playerMovement;
+    public PlayerMovement Player => _playerMovement;
 
     [SerializeField] private SpriteRenderer _spriteRenderer;
     [SerializeField] private PolygonCollider2D _polygonCollider;
