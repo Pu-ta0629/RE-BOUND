@@ -1,4 +1,4 @@
 # RE BOUND
-Asset/RE:BOUND/Scriptesにスクリプトがあります
+Asset/RE:BOUND/Scriptesに各スクリプトがあります
 
 
