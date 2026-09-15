@@ -20,25 +20,10 @@ public class PlayerManager : MonoBehaviour
     [Header("Prediction")]
     [SerializeField] private LineRenderer _lineRenderer;
 
-    private int _maxReflection = 2;
+    [SerializeField] private int _maxReflection = 2;
 
     [Header("Sprite")]
     [SerializeField] private List<PlayerData> _playerDataList;
-
-    public PlayerMovement SpawnPlayer(StageData stageData)
-    {
-        ChangeSprite(stageData.PlayerType);
-
-        _playerMovement.Initialize(
-            stageData.MoveSpeed,
-            stageData.RotateSpeed,
-            stageData.RotationMode,
-            stageData.StartPos);
-
-        HidePredictionLine();
-
-        return _playerMovement;
-    }
 
     public void Initialize(StageData stageData)
     {

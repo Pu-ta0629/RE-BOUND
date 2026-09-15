@@ -10,27 +10,20 @@ public class GameController : MonoBehaviour
     [SerializeField] private StageManager _stageManager;
     [SerializeField] private PlayerManager _playerManager;
     [SerializeField] private GimmickManager _gimmickManager;
-    [SerializeField] private Button _retryButton;
+    //[SerializeField] private Button _retryButton;
     public StageManager StageManager => _stageManager;
     public PlayerManager PlayerManager => _playerManager;
     public GimmickManager GimmickManager => _gimmickManager;
 
-    private bool _isPlaying = true;
-
-    public bool IsPlaying => _isPlaying;
+    public bool IsPlaying => !GameSettingsManager.Instance.IsPaused;
 
     public void Initialize()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        if(Instance == null) Instance = this;
 
-        _retryButton.onClick.RemoveAllListeners();
-        _retryButton.onClick.AddListener(Retry);
+        //_retryButton.onClick.RemoveAllListeners();
+        //_retryButton.onClick.AddListener(Retry);
 
-        Instance = this;
 
         _stageManager.Initialize(GameManager.Instance.CurrentStageID);
 
@@ -53,17 +46,13 @@ public class GameController : MonoBehaviour
 
     private void HandleInput()
     {
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            ToggleMenu();
-        }
-
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        var current = Keyboard.current;
+        if (current.spaceKey.wasPressedThisFrame)
         {
             ActiveEvent();
         }
 
-        if(Keyboard.current.rKey.wasPressedThisFrame)
+        if(current.rKey.wasPressedThisFrame)
         {
             Retry();
         }
@@ -110,9 +99,8 @@ public class GameController : MonoBehaviour
 
     public void ToggleMenu()
     {
-        _isPlaying = !_isPlaying;
-
-        Debug.Log(_isPlaying ? "Resume" : "Pause");
+        GameSettingsManager.Instance.TogglePause();
+        Debug.Log(GameSettingsManager.Instance.IsPaused ? "Resume" : "Pause");
     }
 
     #endregion

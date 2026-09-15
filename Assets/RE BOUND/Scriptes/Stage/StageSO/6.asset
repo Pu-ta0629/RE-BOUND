@@ -14,9 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageData
   StageName: 6
   StageID: 6
-  StartPos: {x: 6, y: 0}
-  GoalPos: {x: -6, y: 0}
+  StartPos: {x: 12, y: 6}
+  GoalPos: {x: -12, y: -6}
   PlayerType: 0
-  MoveSpeed: 15
+  MoveSpeed: 25
   RotationMode: 1
   RotateSpeed: 360
+  GoalMoveType: 0
+  GoalMoveSpeed: 0
+  GoalMoveRange: 0
+  GoalFreeDirection: {x: 0, y: 0}
+  GoalRotateType: 0
+  GoalRotateSpeed: 0

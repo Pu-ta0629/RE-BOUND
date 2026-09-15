@@ -10,9 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 2779344289453597683}
   - component: {fileID: 2808855574642639892}
-  - component: {fileID: 7557431616207907095}
-  - component: {fileID: 7791065794402146172}
   - component: {fileID: 8800360544823312561}
+  - component: {fileID: 7791065794402146172}
+  - component: {fileID: 4479356821779729101}
+  - component: {fileID: 8427215570863718190}
+  - component: {fileID: 7557431616207907095}
+  - component: {fileID: 559626475307875256}
   m_Layer: 0
   m_Name: Gimmick_Goal
   m_TagString: Untagged
@@ -61,7 +64,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: a2db29db1f1e1024dbf9ca5ab5cd3f10, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85,7 +88,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 3625043607559282579, guid: 19fb86013d8c24d6cb8410c0aadf30fa, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -94,6 +97,60 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &8800360544823312561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097638986427436726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d43e457e6ac526a41abfa9e5b33856fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GimmickController
+--- !u!114 &7791065794402146172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097638986427436726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00ad2359a1b24254bb8485a6054b0c7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gimmick_Goal
+--- !u!114 &4479356821779729101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097638986427436726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9d6f66ab6f9ff748a04e6936eef10d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gimmick_Rotate
+  _rotateType: 0
+  _rotateSpeed: 90
+--- !u!114 &8427215570863718190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097638986427436726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 050e7d82558840c4dacfe23a610b9380, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gimmick_Move
+  _moveType: 0
+  _moveSpeed: 0
+  _moveRange: 0
+  _freeDirection: {x: 0, y: 0}
 --- !u!60 &7557431616207907095
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -145,27 +202,30 @@ PolygonCollider2D:
       - {x: 0, y: -0.25}
       - {x: 0.5, y: 0}
   m_UseDelaunayMesh: 1
---- !u!114 &7791065794402146172
-MonoBehaviour:
+--- !u!50 &559626475307875256
+Rigidbody2D:
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2097638986427436726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00ad2359a1b24254bb8485a6054b0c7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gimmick_Goal
---- !u!114 &8800360544823312561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2097638986427436726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d43e457e6ac526a41abfa9e5b33856fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GimmickController
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

@@ -4,17 +4,17 @@ using UnityEngine.UI;
 
 public class Retry : MonoBehaviour
 {
-    [SerializeField] private Button _button;
+    //private Button _button;
     public event Action OnRetry;
 
     private void Awake()
     {
-        _button.onClick.AddListener(InvokeRetry);
+        //_button.onClick.AddListener(InvokeRetry);
     }
 
     private void OnDestroy()
     {
-        _button.onClick.RemoveListener(InvokeRetry);
+        //_b1utton.onClick.RemoveListener(InvokeRetry);
     }
 
     private void InvokeRetry()

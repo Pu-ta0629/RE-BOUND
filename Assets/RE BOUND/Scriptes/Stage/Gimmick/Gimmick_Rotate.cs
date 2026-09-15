@@ -24,8 +24,24 @@ public class Gimmick_Rotate : MonoBehaviour, IGimmick
         if (_rotateType == Enum_RotateType.Physics && _rb != null)
         {
             _rb.angularVelocity = _rotateSpeed;
+            _rb.mass = 0.0001f;
+            _rb.angularDamping = 0;
         }
     }
+
+    public void InitializeGoal(Enum_RotateType rotateType, float rotateSpeed)
+    {
+        _rotateType = rotateType;
+        _rotateSpeed = rotateSpeed;
+
+        if (_rotateType == Enum_RotateType.Physics)
+        {
+            _rb.angularVelocity = _rotateSpeed;
+            _rb.mass = 0.0001f;
+            _rb.angularDamping = 0;
+        }
+    }
+
     private void NULLCHECK()
     {
         if(_rb == null)

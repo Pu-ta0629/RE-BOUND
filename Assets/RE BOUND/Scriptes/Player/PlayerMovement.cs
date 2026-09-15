@@ -3,11 +3,12 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public static PlayerMovement Instance;
     private Rigidbody2D _rb;
     private Camera _mainCamera;
 
     [SerializeField] private PlayerManager _playerManager;
-    [SerializeField] private float _minDragDistance = 1;
+    [SerializeField] private float _minDragDistance = 2;
 
     [Header("Debug")]
     [SerializeField] private Vector2 _dragStart;
@@ -18,15 +19,22 @@ public class PlayerMovement : MonoBehaviour
 
     private bool _isDragging;
     private bool _isLaunched;
+    public bool IsLaunched => _isLaunched;
+
+    private bool _isPerformance = false;
+    public bool IsPerformance => _isPerformance;
 
     private int _bounceCount;
     public int BounceCount => _bounceCount;
 
-    public bool IsLaunched => _isLaunched;
 
     #region INITIALIZE
     public void Initialize(float moveSpeed, float rotateSpeed, Enum_RotationMode rotationMode, Vector2 startPos)
     {
+        if(Instance == null)
+        {
+            Instance = this;
+        }
         Cache();
 
         _moveSpeed = moveSpeed;
@@ -101,12 +109,12 @@ public class PlayerMovement : MonoBehaviour
     #region INPUT
     private void HandleInput()
     {
+        if (_isPerformance) return;
+        if (!GameController.Instance.IsPlaying) return;
         if (_isLaunched) return;
 
         var mouse = Mouse.current;
-
         if (mouse == null) return;
-
         if (mouse.leftButton.wasPressedThisFrame)
         {
             _dragStart = GetMouseWorldPosition();
@@ -147,6 +155,10 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region PLAYER
+    public void SetPerformance(bool value)
+    {
+        _isPerformance = value;
+    }
     private void Launch()
     {
         Vector2 direction = _dragStart - _dragEnd;

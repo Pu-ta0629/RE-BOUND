@@ -19,7 +19,10 @@ public class StageSelectManager : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnSceneLoad;
     }
-
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoad;
+    }
     private void OnSceneLoad(Scene scene, LoadSceneMode mode)
     {
         Initialize();

@@ -1,7 +1,4 @@
-using UnityEditor;
-using UnityEditor.Overlays;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -18,7 +15,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private StaticSceneAsset _inGameScene;
     [SerializeField] private StaticSceneAsset _stageSelect;
     private SaveManager _saveManager;
-    public SaveManager SaveManager=> _saveManager;
+    private GameSettingsManager _gameSettingsManager;
+    public SaveManager SaveManager => _saveManager;
+    public StaticSceneAsset StartScene => _startScene;
+    public StaticSceneAsset InGameScene => _inGameScene;
+    public StaticSceneAsset StageSelect => _stageSelect;
 
     private void Awake()
     {
@@ -35,16 +36,14 @@ public class GameManager : MonoBehaviour
         _maxUnlockStage = MaxUnlockStage;
 
     }
-
     private void Initialize()
     {
         _saveManager = GetComponent<SaveManager>();
-        if(_saveManager == null)
-        {
-            _saveManager = gameObject.AddComponent<SaveManager>();
-        }
-        _saveManager.Initialize();
+        _gameSettingsManager = GetComponent<GameSettingsManager>();
 
+        _saveManager.Initialize();
+        _gameSettingsManager.Initialize();
+        
         Load();
 
         //FindFirstObjectByType<GameController>()?.Initialize();
@@ -92,7 +91,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Save
-
+    //保存
     public void Save()
     {
         SaveData data = _saveManager.Load();
@@ -100,7 +99,7 @@ public class GameManager : MonoBehaviour
         data.MaxUnlockedStage = MaxUnlockStage;
         _saveManager.Save(data);
     }
-
+    //保存データの読み込み
     public void Load()
     {
         SaveData data = _saveManager.Load();
@@ -115,6 +114,7 @@ public class GameManager : MonoBehaviour
     public void Quit()
     {
         Debug.Log("END GAME");
+        //UnityEditor と Application時に終了の処理を変える
         #if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
         #else

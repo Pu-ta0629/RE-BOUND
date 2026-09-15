@@ -3,11 +3,8 @@ using UnityEngine;
 public class Gimmick_Move : MonoBehaviour, IGimmick
 {
     [SerializeField] private Enum_MoveType _moveType;
-
     [SerializeField] private float _moveSpeed = 3f;
-
     [SerializeField] private float _moveRange = 5f;
-
     [SerializeField] private Vector2 _freeDirection;
 
     private Vector2 _startPosition;
@@ -28,6 +25,15 @@ public class Gimmick_Move : MonoBehaviour, IGimmick
 
         _collider.autoTiling = true;
         _collider.CreateFromSprite(_spriteRenderer.sprite);
+    }
+    public void InitializeGoal(Enum_MoveType moveType, float moveSpeed, float moveRange, Vector2 freeDirection)
+    {
+        _moveType = moveType;
+        _moveSpeed = moveSpeed;
+        _moveRange = moveRange;
+        _freeDirection = freeDirection;
+
+        _startPosition = transform.position;
     }
     private void NULLCHECK()
     {
