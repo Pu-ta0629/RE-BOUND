@@ -26,3 +26,14 @@ public enum Enum_RotateType
     Constant,
     Physics
 }
+
+public enum Enum_EffectType
+{
+    PlayerIdle,
+    PlayerBounce,
+    WallBounce,
+    Goal,
+    Retry,
+    WarpEnter,
+    WarpExit
+}

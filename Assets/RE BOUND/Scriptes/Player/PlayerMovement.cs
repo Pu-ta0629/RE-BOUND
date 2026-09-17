@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private PlayerManager _playerManager;
     [SerializeField] private float _minDragDistance = 2;
+    [SerializeField] private ParticleSystem _playerIdle;
+    [SerializeField] private GameObject _playerIdleObj;
 
     [Header("Debug")]
     [SerializeField] private Vector2 _dragStart;
@@ -26,11 +28,10 @@ public class PlayerMovement : MonoBehaviour
 
     private int _bounceCount;
     public int BounceCount => _bounceCount;
-
-
     #region INITIALIZE
     public void Initialize(float moveSpeed, float rotateSpeed, Enum_RotationMode rotationMode, Vector2 startPos)
     {
+        gameObject.SetActive( false );
         if(Instance == null)
         {
             Instance = this;
@@ -55,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
         {
             gameObject.SetActive(true);
         }
-
+        _playerIdleObj.SetActive(true);
         NULLCHECK();
     }
 
@@ -93,8 +94,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!_isLaunched)
-            return;
+        if (!_isLaunched) return;
 
         MaintainSpeed();
         HandleRotation();
@@ -103,6 +103,9 @@ public class PlayerMovement : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         _bounceCount++;
+        ContactPoint2D contact = collision.GetContact(0);
+
+        EffectManager.Instance.Play(Enum_EffectType.PlayerBounce, contact.point, contact.normal);
     }
     #endregion
 
@@ -145,6 +148,24 @@ public class PlayerMovement : MonoBehaviour
             Launch();
 
             _isDragging = false;
+        }
+
+        bool isStartIdleParticle = !_isDragging && !_isLaunched;
+        if (isStartIdleParticle)
+        {
+            if (_playerIdle.isStopped)
+            {
+                _playerIdle.Play();
+                _playerIdleObj.SetActive(true);
+            }
+        }
+        else
+        {
+            if (_playerIdle.isPlaying)
+            {
+                _playerIdle.Stop();
+                _playerIdleObj.SetActive(false);
+            }
         }
     }
 

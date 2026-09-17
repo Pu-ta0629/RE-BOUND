@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private StaticSceneAsset _stageSelect;
     private SaveManager _saveManager;
     private GameSettingsManager _gameSettingsManager;
+    private EffectManager _effectManager;
     public SaveManager SaveManager => _saveManager;
     public StaticSceneAsset StartScene => _startScene;
     public StaticSceneAsset InGameScene => _inGameScene;
@@ -40,9 +41,11 @@ public class GameManager : MonoBehaviour
     {
         _saveManager = GetComponent<SaveManager>();
         _gameSettingsManager = GetComponent<GameSettingsManager>();
+        _effectManager = GetComponentInChildren<EffectManager>();
 
         _saveManager.Initialize();
         _gameSettingsManager.Initialize();
+        _effectManager.Initialize();
         
         Load();
 

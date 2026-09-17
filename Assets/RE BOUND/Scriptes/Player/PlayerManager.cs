@@ -24,6 +24,9 @@ public class PlayerManager : MonoBehaviour
 
     [Header("Sprite")]
     [SerializeField] private List<PlayerData> _playerDataList;
+    private Enum_PlayerType _curretnPlayerType;
+    public Enum_PlayerType PlayerType => _curretnPlayerType;
+
 
     public void Initialize(StageData stageData)
     {
@@ -81,6 +84,7 @@ public class PlayerManager : MonoBehaviour
         {
             if (data.PlayerType != playerType) continue;
 
+            _curretnPlayerType = playerType;
             _spriteRenderer.sprite = data.Sprite;
 
             _polygonCollider.CreateFromSprite(data.Sprite);
