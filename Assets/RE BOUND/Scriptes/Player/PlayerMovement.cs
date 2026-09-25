@@ -8,9 +8,19 @@ public class PlayerMovement : MonoBehaviour
     private Camera _mainCamera;
 
     [SerializeField] private PlayerManager _playerManager;
-    [SerializeField] private float _minDragDistance = 2;
+
+    [Header("Drag")]
+    [SerializeField] private float _minDragDistance = 2f;
+
+    [Header("Movement")]
+    [SerializeField] private Enum_MovePhysicsMode _movePhysicsMode;
+    [SerializeField] private float _deceleration = 0.985f;
+    [SerializeField] private float _stopSpeed = 0.2f;
+
+    [Header("Idle")]
     [SerializeField] private ParticleSystem _playerIdle;
     [SerializeField] private GameObject _playerIdleObj;
+
     [Header("SE")]
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioClip[] _se;
@@ -18,43 +28,48 @@ public class PlayerMovement : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private Vector2 _dragStart;
     [SerializeField] private Vector2 _dragEnd;
+
     private float _moveSpeed;
+    private float _currentSpeed;
     private float _rotateSpeed;
+
     private Enum_RotationMode _rotationMode;
 
     private bool _isDragging;
     private bool _isLaunched;
-    public bool IsLaunched => _isLaunched;
-
-    private bool _isPerformance = false;
-    public bool IsPerformance => _isPerformance;
+    private bool _isPerformance;
 
     private int _bounceCount;
+
+    public bool IsLaunched => _isLaunched;
+    public bool IsPerformance => _isPerformance;
     public int BounceCount => _bounceCount;
+
     #region INITIALIZE
-    public void Initialize(float moveSpeed, float rotateSpeed, Enum_RotationMode rotationMode, Vector2 startPos)
+
+    public void Initialize(StageData stageData)
     {
-        gameObject.SetActive( false );
+        gameObject.SetActive(false);
+
         Cache();
 
-        _moveSpeed = moveSpeed;
-        _rotateSpeed = rotateSpeed;
-        _rotationMode = rotationMode;
+        _moveSpeed = stageData.MoveSpeed;
+        _rotateSpeed = stageData.RotateSpeed;
+        _rotationMode = stageData.RotationMode;
+
+        _currentSpeed = 0f;
 
         _isDragging = false;
         _isLaunched = false;
+        _isPerformance = false;
 
         _bounceCount = 0;
 
         _rb.linearVelocity = Vector2.zero;
         _rb.angularVelocity = _rotationMode == Enum_RotationMode.Constant ? _rotateSpeed : 0f;
 
-        transform.SetPositionAndRotation(startPos, Quaternion.identity);
-
-        if(gameObject.activeSelf == false)
-        {
-            gameObject.SetActive(true);
-        }
+        transform.SetPositionAndRotation(stageData.StartPos,Quaternion.identity);
+        gameObject.SetActive(true);
         _playerIdleObj.SetActive(true);
 
         NULLCHECK();
@@ -64,29 +79,24 @@ public class PlayerMovement : MonoBehaviour
     {
         _rb ??= GetComponent<Rigidbody2D>();
         _mainCamera ??= Camera.main;
-
-        NULLCHECK();
     }
+
     private void NULLCHECK()
     {
         if (_rb == null)
-        {
             Debug.LogWarning($"{name} : Rigidbody2D not found");
-        }
 
         if (_mainCamera == null)
-        {
             Debug.LogWarning($"{name} : MainCamera not found");
-        }
 
         if (_playerManager == null)
-        {
             Debug.LogWarning($"{name} : PlayerManager not found");
-        }
     }
+
     #endregion
 
     #region UNITY EVENT
+
     private void Update()
     {
         HandleInput();
@@ -94,39 +104,48 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!_isLaunched) return;
+        if (!_isLaunched)
+            return;
 
-        MaintainSpeed();
+        HandleMove();
         HandleRotation();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         _bounceCount++;
-        ContactPoint2D contact = collision.GetContact(0);
 
-        EffectManager.Instance.Play(Enum_EffectType.PlayerBounce, contact.point, contact.normal);
-        for(int i = 0;i < _se.Length;i++)
+        ContactPoint2D contact = collision.GetContact(0);
+        EffectManager.Instance.Play(Enum_EffectType.PlayerBounce, contact.point, contact.normal); 
+
+        foreach (AudioClip clip in _se)
         {
-            StartCoroutine(ShotSE(_se, i));
+            StartCoroutine(PlaySE(clip));
         }
     }
-    private IEnumerator ShotSE(AudioClip[] se, int i)
+
+    private IEnumerator PlaySE(AudioClip clip)
     {
-        _audioSource.PlayOneShot(se[i]);
-        yield return new WaitForSeconds(0.15f);
+        _audioSource.PlayOneShot(clip);
+        //yield return new WaitForSeconds(0.15f);
+        yield return null;
     }
+
     #endregion
 
     #region INPUT
+
     private void HandleInput()
     {
         if (_isPerformance) return;
         if (!GameController.Instance.IsPlaying) return;
         if (_isLaunched) return;
 
-        var mouse = Mouse.current;
-        if (mouse == null) return;
+        Mouse mouse = Mouse.current;
+
+        if (mouse == null)
+            return;
+
         if (mouse.leftButton.wasPressedThisFrame)
         {
             _dragStart = GetMouseWorldPosition();
@@ -149,7 +168,6 @@ public class PlayerMovement : MonoBehaviour
 
         if (mouse.leftButton.wasReleasedThisFrame && _isDragging)
         {
-
             _dragEnd = GetMouseWorldPosition();
 
             _playerManager.HidePredictionLine();
@@ -159,8 +177,9 @@ public class PlayerMovement : MonoBehaviour
             _isDragging = false;
         }
 
-        bool isStartIdleParticle = !_isDragging && !_isLaunched;
-        if (isStartIdleParticle)
+        bool showIdle = !_isDragging && !_isLaunched;
+
+        if (showIdle)
         {
             if (_playerIdle.isStopped)
             {
@@ -182,20 +201,24 @@ public class PlayerMovement : MonoBehaviour
     {
         return _mainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
     }
+
     #endregion
 
     #region PLAYER
+
     public void SetPerformance(bool value)
     {
         _isPerformance = value;
     }
+
     private void Launch()
     {
         Vector2 direction = _dragStart - _dragEnd;
 
-        //if (direction.sqrMagnitude < 0.01f) return;
-        if (!IsValidDrag(direction)) return;
+        if (!IsValidDrag(direction))
+            return;
 
+        _currentSpeed = _moveSpeed;
         _rb.linearVelocity = direction.normalized * _moveSpeed;
 
         if (_rotationMode == Enum_RotationMode.Constant)
@@ -208,17 +231,54 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsValidDrag(Vector2 direction)
     {
-        return direction.sqrMagnitude >= _minDragDistance * _minDragDistance;
+        return direction.sqrMagnitude >=
+               _minDragDistance * _minDragDistance;
+    }
+
+    private void HandleMove()
+    {
+        switch (_movePhysicsMode)
+        {
+            case Enum_MovePhysicsMode.Constant:
+                MaintainSpeed();
+                break;
+
+            case Enum_MovePhysicsMode.Physics:
+                MonsterMove();
+                break;
+        }
     }
 
     private void MaintainSpeed()
     {
-        if (_rb.linearVelocity.sqrMagnitude <= 0.01f)
-            return;
-
+        if (_rb.linearVelocity.sqrMagnitude <= 0.0001f) return;
         _rb.linearVelocity = _rb.linearVelocity.normalized * _moveSpeed;
     }
 
+    private void MonsterMove()
+    {
+        _currentSpeed *= Mathf.Pow(_deceleration, Time.fixedDeltaTime * 60f);
+
+        if (_currentSpeed <= _stopSpeed)
+        {
+            StopPlayer();
+            return;
+        }
+
+        if (_rb.linearVelocity.sqrMagnitude > 0.0001f)
+        {
+            _rb.linearVelocity = _rb.linearVelocity.normalized * _currentSpeed;
+        }
+    }
+    private void StopPlayer()
+    {
+        _currentSpeed = 0f;
+
+        _rb.linearVelocity = Vector2.zero;
+        _rb.angularVelocity = 0f;
+
+        _isLaunched = false;
+    }
     private void HandleRotation()
     {
         switch (_rotationMode)

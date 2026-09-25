@@ -4,7 +4,6 @@ public enum Enum_PlayerType
     Square,
     Triangle,
     Hexagon, 
-    Sparkle
 }
 
 public enum Enum_RotationMode
@@ -36,4 +35,10 @@ public enum Enum_EffectType
     Retry,
     WarpEnter,
     WarpExit
+}
+
+public enum Enum_MovePhysicsMode
+{
+    Constant, 
+    Physics
 }

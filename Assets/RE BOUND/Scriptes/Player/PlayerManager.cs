@@ -40,11 +40,7 @@ public class PlayerManager : MonoBehaviour
 
         ChangeSprite(stageData.PlayerType);
 
-        _playerMovement.Initialize(
-            stageData.MoveSpeed,
-            stageData.RotateSpeed,
-            stageData.RotationMode,
-            stageData.StartPos);
+        _playerMovement.Initialize(stageData);
 
         HidePredictionLine();
     }

@@ -16,9 +16,9 @@ MonoBehaviour:
   StageID: 7
   StartPos: {x: -12, y: 6}
   GoalPos: {x: 12, y: 6}
-  PlayerType: 1
+  PlayerType: 2
   MoveSpeed: 25
-  RotationMode: 1
+  RotationMode: 0
   RotateSpeed: 360
   GoalMoveType: 0
   GoalMoveSpeed: 0

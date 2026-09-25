@@ -1,42 +1,88 @@
-using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Xml.Serialization;
-using UnityEditor.Overlays;
 using UnityEngine;
 
 public class SaveManager : MonoBehaviour
 {
     private string _savePath;
 
+    private Dictionary<int, StageRecord> _stageRecordDict;
+
     public void Initialize()
     {
         _savePath = Path.Combine(Application.persistentDataPath, "SaveData.json");
+
+        BuildCache();
     }
+
+    #region CACHE
+
+    private void BuildCache()
+    {
+        SaveData data = LoadRaw();
+        _stageRecordDict = new();
+        foreach (StageRecord record in data.StageRecords)
+        {
+            _stageRecordDict[record.StageID] = record;
+        }
+    }
+
+    #endregion
+
+    #region SAVE
 
     public void Save(SaveData data)
     {
         string json = JsonUtility.ToJson(data, true);
-
         File.WriteAllText(_savePath, json);
+        BuildCache();
 
         Debug.Log($"Save : {_savePath}");
     }
 
     public SaveData Load()
     {
+        SaveData data = LoadRaw();
+        if (_stageRecordDict == null)
+        {
+            BuildCache();
+        }
+
+        return data;
+    }
+
+    private SaveData LoadRaw()
+    {
         if (!File.Exists(_savePath))
         {
             SaveData newData = CreateDefaultData();
 
-            Save(newData);
+            string _json = JsonUtility.ToJson(newData, true);
+            File.WriteAllText(_savePath, _json);
 
             return newData;
         }
 
         string json = File.ReadAllText(_savePath);
 
-        return JsonUtility.FromJson<SaveData>(json);
+        SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+        if (data == null)
+        {
+            data = CreateDefaultData();
+        }
+
+        if (data.StageRecords == null)
+        {
+            data.StageRecords = new();
+        }
+
+        return data;
     }
+
+    #endregion
+
+    #region UPDATE
 
     public SaveData UpdateSaveData(int currentStageID, int maxUnlockedStage)
     {
@@ -54,17 +100,16 @@ public class SaveManager : MonoBehaviour
     {
         SaveData data = Load();
 
-        StageRecord stageRecord = data.StageRecords.Find(x => x.StageID == stageID);
-
-        if (stageRecord == null)
+        if (!_stageRecordDict.TryGetValue(stageID, out StageRecord stageRecord))
         {
-            stageRecord = new StageRecord()
+            stageRecord = new StageRecord
             {
                 StageID = stageID,
                 BestBounceCount = bounceCount
             };
 
             data.StageRecords.Add(stageRecord);
+            _stageRecordDict.Add(stageID, stageRecord);
         }
         else
         {
@@ -77,17 +122,61 @@ public class SaveManager : MonoBehaviour
         Save(data);
     }
 
+    #endregion
+
+    #region GET
+
+    public int GetBestBounce(int stageID)
+    {
+        if (_stageRecordDict.TryGetValue(stageID, out StageRecord stageRecord))
+        {
+            return stageRecord.BestBounceCount;
+        }
+
+        return -1;
+    }
+
+    public bool IsStageCleared(int stageID)
+    {
+        return _stageRecordDict.ContainsKey(stageID);
+    }
+
+    public StageRecord GetStageRecord(int stageID)
+    {
+        _stageRecordDict.TryGetValue(stageID, out StageRecord stageRecord);
+
+        return stageRecord;
+    }
+
+    #endregion
+
+    #region RESET
+
+    public void ClearSave()
+    {
+        if (File.Exists(_savePath))
+        {
+            File.Delete(_savePath);
+        }
+
+        Save(CreateDefaultData());
+
+        Debug.Log("Save Data Reset");
+    }
+
+    #endregion
+
+    #region CREATE
+
     private SaveData CreateDefaultData()
     {
-        return new SaveData()
+        return new SaveData
         {
             CurrentStageID = 1,
-            MaxUnlockedStage = 1
+            MaxUnlockedStage = 1,
+            StageRecords = new()
         };
     }
 
-    //internal void Save(int currentStageID, object maxUnlockedStage)
-    //{
-    //    throw new NotImplementedException();
-    //}
+    #endregion
 }

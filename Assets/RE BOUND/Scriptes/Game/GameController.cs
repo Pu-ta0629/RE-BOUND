@@ -68,7 +68,7 @@ public class GameController : MonoBehaviour
     {
         _playerManager.Player.gameObject.SetActive(false);
         EffectManager.Instance.Play(Enum_EffectType.Retry, _playerManager.Player.transform.position, Vector2.up);
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSecondsRealtime(0.15f);
         _playerManager.Initialize(_stageManager.CurrentStageData);
     }
     #endregion

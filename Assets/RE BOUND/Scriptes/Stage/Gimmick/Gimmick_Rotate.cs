@@ -19,6 +19,8 @@ public class Gimmick_Rotate : MonoBehaviour, IGimmick
 
         NULLCHECK();
 
+        //_rb.constraints = RigidbodyConstraints2D.FreezePosition;
+
         _collider.autoTiling = true;
         _collider.CreateFromSprite(_spriteRenderer.sprite);
         if (_rotateType == Enum_RotateType.Physics && _rb != null)
