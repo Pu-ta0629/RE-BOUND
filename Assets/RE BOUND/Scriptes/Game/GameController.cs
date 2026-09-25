@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -43,7 +44,6 @@ public class GameController : MonoBehaviour
     {
         HandleInput();
     }
-
     private void HandleInput()
     {
         var current = Keyboard.current;
@@ -62,9 +62,15 @@ public class GameController : MonoBehaviour
 
     public void Retry()
     {
+        StartCoroutine(RetryRoutine());
+    }
+    private IEnumerator RetryRoutine()
+    {
+        _playerManager.Player.gameObject.SetActive(false);
+        EffectManager.Instance.Play(Enum_EffectType.Retry, _playerManager.Player.transform.position, Vector2.up);
+        yield return new WaitForSeconds(0.15f);
         _playerManager.Initialize(_stageManager.CurrentStageData);
     }
-
     #endregion
 
     #region Goal

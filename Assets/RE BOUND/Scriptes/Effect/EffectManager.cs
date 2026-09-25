@@ -10,6 +10,7 @@ public class EffectManager : MonoBehaviour
     {
         public Enum_EffectType EffectType;
         public ParticleSystem Prefab;
+        public Transform Parent;
         public int PoolSize = 10;
     }
 
@@ -30,7 +31,7 @@ public class EffectManager : MonoBehaviour
 
         foreach (var data in _effectList)
         {
-            EffectPool pool = new EffectPool(data.Prefab, data.PoolSize, transform);
+            EffectPool pool = new EffectPool(data.Prefab, data.PoolSize, data.Parent);
             _effectPools.Add(data.EffectType,pool);
         }
     }
@@ -46,6 +47,26 @@ public class EffectManager : MonoBehaviour
         ParticleSystem effect = pool.Get();
 
         effect.transform.position = position;
+        effect.transform.up = direction;
+        effect.gameObject.SetActive(true);
+        effect.Clear();
+        effect.Play();
+    }
+    
+    public void PlayWallBounce(Enum_EffectType effectType, Vector3 position, Vector2 direction)
+    {
+        if (!_effectPools.TryGetValue(effectType, out EffectPool pool))
+        {
+            Debug.LogWarning($"Effect Not Found : {effectType}");
+            return;
+        }
+
+        ParticleSystem effect = pool.Get();
+
+        effect.transform.position = position;
+        ParticleSystemRenderer renderer = effect.GetComponent<ParticleSystemRenderer>();
+        
+        renderer.material.SetVector("_HitPosition", position);
         effect.transform.up = direction;
         effect.gameObject.SetActive(true);
         effect.Clear();

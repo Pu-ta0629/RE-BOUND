@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    public static PlayerManager Instance { get; private set; }
+
     [System.Serializable]
     public class PlayerData
     {
@@ -31,6 +33,10 @@ public class PlayerManager : MonoBehaviour
     public void Initialize(StageData stageData)
     {
         NULLCHECK();
+        if(Instance == null)
+        {
+            Instance = this;
+        }
 
         ChangeSprite(stageData.PlayerType);
 

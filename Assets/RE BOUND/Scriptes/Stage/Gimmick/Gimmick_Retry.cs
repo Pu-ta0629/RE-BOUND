@@ -1,5 +1,6 @@
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Gimmick_Retry : MonoBehaviour, IGimmick
 {
@@ -29,7 +30,6 @@ public class Gimmick_Retry : MonoBehaviour, IGimmick
             Debug.LogWarning($"{this.name} : SpriteRenderer not found");
         }
     }
-
     public void OnPlayerHit(PlayerMovement player)
     {
         GameController.Instance.Retry();

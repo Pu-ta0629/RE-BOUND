@@ -1,9 +1,9 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public static PlayerMovement Instance;
     private Rigidbody2D _rb;
     private Camera _mainCamera;
 
@@ -11,6 +11,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _minDragDistance = 2;
     [SerializeField] private ParticleSystem _playerIdle;
     [SerializeField] private GameObject _playerIdleObj;
+    [Header("SE")]
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip[] _se;
 
     [Header("Debug")]
     [SerializeField] private Vector2 _dragStart;
@@ -32,10 +35,6 @@ public class PlayerMovement : MonoBehaviour
     public void Initialize(float moveSpeed, float rotateSpeed, Enum_RotationMode rotationMode, Vector2 startPos)
     {
         gameObject.SetActive( false );
-        if(Instance == null)
-        {
-            Instance = this;
-        }
         Cache();
 
         _moveSpeed = moveSpeed;
@@ -57,6 +56,7 @@ public class PlayerMovement : MonoBehaviour
             gameObject.SetActive(true);
         }
         _playerIdleObj.SetActive(true);
+
         NULLCHECK();
     }
 
@@ -106,6 +106,15 @@ public class PlayerMovement : MonoBehaviour
         ContactPoint2D contact = collision.GetContact(0);
 
         EffectManager.Instance.Play(Enum_EffectType.PlayerBounce, contact.point, contact.normal);
+        for(int i = 0;i < _se.Length;i++)
+        {
+            StartCoroutine(ShotSE(_se, i));
+        }
+    }
+    private IEnumerator ShotSE(AudioClip[] se, int i)
+    {
+        _audioSource.PlayOneShot(se[i]);
+        yield return new WaitForSeconds(0.15f);
     }
     #endregion
 
