@@ -4,6 +4,7 @@ using UnityEngine;
 public class EffectPool
 {
     private readonly Queue<ParticleSystem> _pool = new();
+    private readonly List<ParticleSystem> _allParticles = new();
     private readonly ParticleSystem _prefab;
     private readonly Transform _parent;
 
@@ -54,5 +55,20 @@ public class EffectPool
     {
         effect.gameObject.SetActive(false);
         _pool.Enqueue(effect);
+    }
+
+    public void StopAll()
+    {
+        foreach(ParticleSystem particle in _allParticles)
+        {
+            if (particle == null) continue;
+            particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            particle.Clear();
+            particle.gameObject.SetActive(false);
+            if(!_pool.Contains(particle))
+            {
+                _pool.Enqueue(particle);
+            }
+        }
     }
 }

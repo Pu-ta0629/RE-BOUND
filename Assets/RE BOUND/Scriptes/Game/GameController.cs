@@ -66,6 +66,7 @@ public class GameController : MonoBehaviour
     }
     private IEnumerator RetryRoutine()
     {
+        EffectManager.Instance.StopAllEffects();
         _playerManager.Player.gameObject.SetActive(false);
         EffectManager.Instance.Play(Enum_EffectType.Retry, _playerManager.Player.transform.position, Vector2.up);
         yield return new WaitForSecondsRealtime(0.15f);

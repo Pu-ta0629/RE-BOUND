@@ -75,18 +75,21 @@ public class GameManager : MonoBehaviour
 
     public void LoadStart()
     {
+        EffectManager.Instance?.StopAllEffects();
         Debug.Log("LOAD SATRT");
         SceneManager.LoadScene(_startScene.Value);
     }
 
     public void LoadStageSelect()
     {
+        EffectManager.Instance?.StopAllEffects();
         Debug.Log("LOAD STAGE SELECT");
         SceneManager.LoadScene(_stageSelect.Value);
     }
 
     public void LoadInGame()
     {
+        EffectManager.Instance?.StopAllEffects();
         Debug.Log("LOAD INGAME");
         SceneManager.LoadScene(_inGameScene.Value);
     }

@@ -72,4 +72,12 @@ public class EffectManager : MonoBehaviour
         effect.Clear();
         effect.Play();
     }
+
+    public void StopAllEffects()
+    {
+        foreach(var pool in _effectPools.Values)
+        {
+            pool.StopAll();
+        }
+    }
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
-public class WallHitEffect : MonoBehaviour
+public class Gimmick_WallHitEffect : MonoBehaviour
 {
     private void OnCollisionEnter2D(Collision2D collision)
     {
