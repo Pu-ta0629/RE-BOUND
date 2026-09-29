@@ -170,7 +170,7 @@ public class MenuUI : MonoBehaviour
         if (_isVisible) Hide();
         else Show();
 
-        GameController.Instance.ToggleMenu();
+        GameSettingsManager.Instance.TogglePause();
     }
 
     public void Show()
@@ -196,7 +196,7 @@ public class MenuUI : MonoBehaviour
     {
         Hide();
 
-        GameController.Instance.ToggleMenu();
+        GameSettingsManager.Instance.SetPause(false);
         GameManager.Instance.LoadStageSelect();
     }
 
@@ -204,7 +204,7 @@ public class MenuUI : MonoBehaviour
     {
         Hide();
 
-        GameController.Instance.ToggleMenu();
+        GameSettingsManager.Instance.SetPause(false);
         GameManager.Instance.LoadStart();
     }
     #endregion

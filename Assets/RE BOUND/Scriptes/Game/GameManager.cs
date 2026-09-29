@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private StaticSceneAsset _startScene;
     [SerializeField] private StaticSceneAsset _inGameScene;
     [SerializeField] private StaticSceneAsset _stageSelect;
+    [SerializeField] private Camera _mainCamera; 
     private SaveManager _saveManager;
     private GameSettingsManager _gameSettingsManager;
     private EffectManager _effectManager;
@@ -21,6 +22,7 @@ public class GameManager : MonoBehaviour
     public StaticSceneAsset StartScene => _startScene;
     public StaticSceneAsset InGameScene => _inGameScene;
     public StaticSceneAsset StageSelect => _stageSelect;
+    public Camera MainCamera => _mainCamera;
 
     private void Awake()
     {

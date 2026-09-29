@@ -2,6 +2,7 @@ using UnityEngine;
 
 //[System.Serializable]
 [RequireComponent(typeof(PolygonCollider2D))]
+[RequireComponent(typeof(IGimmick))]
 public class GimmickController : MonoBehaviour
 {
     private IGimmick _gimmick;
@@ -16,6 +17,7 @@ public class GimmickController : MonoBehaviour
     private void Cache()
     {
         MonoBehaviour[] components = GetComponents<MonoBehaviour>();
+        //IGimmick gimmick = GetComponent<IGimmick>();
 
         foreach (var component in components)
         {

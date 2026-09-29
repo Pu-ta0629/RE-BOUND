@@ -2,32 +2,20 @@ using UnityEngine;
 
 public class EffectPoolObject : MonoBehaviour
 {
-    private EffectPool _pool;
     private ParticleSystem _particle;
+    private EffectPool _pool;
 
-    private bool _initialized;
-
-    public void Initialize(EffectPool pool)
+    public void Initialize(ParticleSystem particle, EffectPool pool)
     {
+        _particle = particle;
         _pool = pool;
 
-        if (_particle == null)
-        {
-            _particle = GetComponent<ParticleSystem>();
-        }
-
-        _initialized = true;
+        ParticleSystem.MainModule main = _particle.main;
+        main.stopAction = ParticleSystemStopAction.Callback;
     }
 
-    private void Update()
+    private void OnParticleSystemStopped()
     {
-        if (!_initialized) return;
-        if (_pool == null) return;
-        if (_particle == null) return;
-
-        if (!_particle.IsAlive(true))
-        {
-            _pool.Return(_particle);
-        }
+        _pool.Return(_particle);
     }
 }

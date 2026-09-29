@@ -55,7 +55,7 @@ public class Gimmick_Goal : MonoBehaviour, IGimmick
     }
     public void OnPlayerHit(PlayerMovement player)
     {
-        GameController.Instance.NextStage();
+        StageProgressManager.Instance.NextStage();
     }
     public void OnPlayerMiss(PlayerMovement player){}
     public void OnActiveEvent(){}

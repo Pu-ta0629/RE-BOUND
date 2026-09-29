@@ -32,7 +32,7 @@ public class Gimmick_Retry : MonoBehaviour, IGimmick
     }
     public void OnPlayerHit(PlayerMovement player)
     {
-        GameController.Instance.Retry();
+        RetryManager.Instance.Retry();
     }
 
     public void OnPlayerMiss(PlayerMovement player){}

@@ -25,7 +25,7 @@ public class EffectPool
                 poolObject = effect.gameObject.AddComponent<EffectPoolObject>();
             }
 
-            poolObject.Initialize(this);
+            poolObject.Initialize(effect, this);
             effect.gameObject.SetActive(false);
             _pool.Enqueue(effect);
         }
@@ -46,7 +46,7 @@ public class EffectPool
             poolObject = effect.gameObject.AddComponent<EffectPoolObject>();
         }
 
-        poolObject.Initialize(this);
+        poolObject.Initialize(effect, this);
         effect.gameObject.SetActive(false);
 
         return effect;

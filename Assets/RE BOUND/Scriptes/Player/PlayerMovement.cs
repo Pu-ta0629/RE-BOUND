@@ -5,8 +5,8 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D _rb;
+    private TrailRenderer _trailRenderer;
     [SerializeField] private PlayerManager _playerManager;
-    [SerializeField] private Camera _mainCamera;
 
     [Header("Drag")]
     [SerializeField] private float _minDragDistance = 2f;
@@ -48,7 +48,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void Initialize(StageData stageData)
     {
-        gameObject.SetActive(false);
 
         Cache();
 
@@ -67,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
         //_rb.linearVelocity = Vector2.zero;
         //_rb.angularVelocity = _rotationMode == Enum_RotationMode.Constant ? _rotateSpeed : 0f;
 
+        gameObject.SetActive(false);
         transform.SetPositionAndRotation(stageData.StartPos,Quaternion.identity);
         gameObject.SetActive(true);
         _playerIdleObj.SetActive(true);
@@ -76,16 +76,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void Cache()
     {
-        _rb ??= GetComponent<Rigidbody2D>();
+        _rb = GetComponent<Rigidbody2D>();
+        _trailRenderer = GetComponent<TrailRenderer>();
     }
 
     private void NULLCHECK()
     {
         if (_rb == null)
             Debug.LogWarning($"{name} : Rigidbody2D not found");
-
-        if (_mainCamera == null)
-            Debug.LogWarning($"{name} : MainCamera not found");
+        if (_trailRenderer == null)
+            Debug.LogWarning($"{name} : TrailRenderer not found");
 
         if (_playerManager == null)
             Debug.LogWarning($"{name} : PlayerManager not found");
@@ -127,6 +127,11 @@ public class PlayerMovement : MonoBehaviour
         _audioSource.PlayOneShot(clip);
         //yield return new WaitForSeconds(0.15f);
         yield return null;
+    }
+
+    private void OnDisable()
+    {
+        _trailRenderer.Clear();
     }
 
     #endregion
@@ -197,7 +202,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 GetMouseWorldPosition()
     {
-        return _mainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        return GameManager.Instance.MainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
     }
 
     #endregion
