@@ -35,9 +35,9 @@ public class BoundaryWallController : MonoBehaviour
         bool needUpdate = false;
         if (!Mathf.Approximately(_lastSize, _mainCamera.orthographicSize)) needUpdate = true;
         if (!Mathf.Approximately(_lastAspect, _mainCamera.aspect)) needUpdate = true;
-        if (_lastCameraPos != _mainCamera.transform.position) needUpdate = true;
+        if (Vector3.SqrMagnitude(_lastCameraPos - _mainCamera.transform.position) > 0.0001f)
 
-        if (needUpdate) UpdateWalls();
+            if (needUpdate) UpdateWalls();
     }
 
     private void UpdateWalls()

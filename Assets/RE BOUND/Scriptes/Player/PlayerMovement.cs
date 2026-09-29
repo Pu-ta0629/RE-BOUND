@@ -5,9 +5,8 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D _rb;
-    private Camera _mainCamera;
-
     [SerializeField] private PlayerManager _playerManager;
+    [SerializeField] private Camera _mainCamera;
 
     [Header("Drag")]
     [SerializeField] private float _minDragDistance = 2f;
@@ -65,8 +64,8 @@ public class PlayerMovement : MonoBehaviour
 
         _bounceCount = 0;
 
-        _rb.linearVelocity = Vector2.zero;
-        _rb.angularVelocity = _rotationMode == Enum_RotationMode.Constant ? _rotateSpeed : 0f;
+        //_rb.linearVelocity = Vector2.zero;
+        //_rb.angularVelocity = _rotationMode == Enum_RotationMode.Constant ? _rotateSpeed : 0f;
 
         transform.SetPositionAndRotation(stageData.StartPos,Quaternion.identity);
         gameObject.SetActive(true);
@@ -78,7 +77,6 @@ public class PlayerMovement : MonoBehaviour
     private void Cache()
     {
         _rb ??= GetComponent<Rigidbody2D>();
-        _mainCamera ??= Camera.main;
     }
 
     private void NULLCHECK()

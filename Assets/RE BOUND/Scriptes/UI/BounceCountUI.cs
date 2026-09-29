@@ -8,6 +8,8 @@ public class BounceCountUI : MonoBehaviour
     private int _current;
     private void Update()
     {
+        if (PlayerManager.Instance == null) return;
+        if (PlayerManager.Instance.Player == null) return;
         if (_current == PlayerManager.Instance.Player.BounceCount) return;
 
         if(GameController.Instance.IsPlaying) gameObject.SetActive(true);

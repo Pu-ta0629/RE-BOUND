@@ -66,7 +66,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 60c5ce6eacf55e9498bc9c76c5d3e1f0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -199,7 +199,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -222,8 +222,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   _playerManager: {fileID: 0}
   _minDragDistance: 2
+  _movePhysicsMode: 0
+  _deceleration: 0.985
+  _stopSpeed: 0.2
   _playerIdle: {fileID: 1026966958411346734}
   _playerIdleObj: {fileID: 8710303740248746560}
+  _audioSource: {fileID: 0}
+  _se: []
   _dragStart: {x: 0, y: 0}
   _dragEnd: {x: 0, y: 0}
 --- !u!50 &1156380938248447371
@@ -366,7 +371,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f3c721056d8dea947aacc6153e95101d, type: 2}
+  - {fileID: 2100000, guid: 60c5ce6eacf55e9498bc9c76c5d3e1f0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -533,6 +538,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerIdle_Animation
       objectReference: {fileID: 0}
+    - target: {fileID: 5569541328179136796, guid: d292181776c2f684bb2a007175dc1b74, type: 3}
+      propertyPath: m_Color.b
+      value: 0.5529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 5569541328179136796, guid: d292181776c2f684bb2a007175dc1b74, type: 3}
+      propertyPath: m_Color.g
+      value: 0.7803922
+      objectReference: {fileID: 0}
+    - target: {fileID: 5569541328179136796, guid: d292181776c2f684bb2a007175dc1b74, type: 3}
+      propertyPath: m_Color.r
+      value: 0.93725497
+      objectReference: {fileID: 0}
     - target: {fileID: 5691081130696409606, guid: d292181776c2f684bb2a007175dc1b74, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -655,6 +672,18 @@ PrefabInstance:
     - target: {fileID: 5884882180743769112, guid: 5fa044dbdd0691e45af31cb7042fdd1b, type: 3}
       propertyPath: m_Name
       value: PlayerIdle
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009910340494554765, guid: 5fa044dbdd0691e45af31cb7042fdd1b, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009910340494554765, guid: 5fa044dbdd0691e45af31cb7042fdd1b, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009910340494554765, guid: 5fa044dbdd0691e45af31cb7042fdd1b, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

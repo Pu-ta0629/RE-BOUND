@@ -16,6 +16,7 @@ public class EffectPool
         for (int i = 0; i < count; i++)
         {
             ParticleSystem effect = Object.Instantiate(_prefab, parent);
+            _allParticles.Add(effect);
 
             EffectPoolObject poolObject = effect.gameObject.GetComponent<EffectPoolObject>();
 

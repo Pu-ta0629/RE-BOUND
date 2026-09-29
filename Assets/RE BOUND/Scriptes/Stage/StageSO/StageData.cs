@@ -32,4 +32,5 @@ public class StageData : ScriptableObject
     [Header("Rotate")]
     public Enum_RotateType GoalRotateType = Enum_RotateType.Constant;
     public float GoalRotateSpeed = 0f;
+   
 }
