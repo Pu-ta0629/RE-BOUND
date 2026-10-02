@@ -2036,6 +2036,8 @@ GameObject:
   - component: {fileID: 1150402029}
   - component: {fileID: 1150402028}
   - component: {fileID: 1150402027}
+  - component: {fileID: 1150402032}
+  - component: {fileID: 1150402031}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -2126,6 +2128,61 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1150402031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1150402026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f57d1dd0bc9f0e4fb22bb4b5218872e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageSelectManager
+  _stageButtons:
+  - StageData: {fileID: 11400000, guid: 593f846c53ff33848a4be02197dd1c89, type: 2}
+    Button: {fileID: 296427415}
+  - StageData: {fileID: 11400000, guid: f0edc3d62a736b5458ba149f0610752c, type: 2}
+    Button: {fileID: 395955561}
+  - StageData: {fileID: 11400000, guid: be5661c501582564689d4473609f6af0, type: 2}
+    Button: {fileID: 2025166930}
+  - StageData: {fileID: 11400000, guid: b6fd9f8d8cbf57842bc9ae3dac2b7d3f, type: 2}
+    Button: {fileID: 1759230850}
+  - StageData: {fileID: 11400000, guid: 1021ed64ac8e1ca47801caddea0cab93, type: 2}
+    Button: {fileID: 403567246}
+  - StageData: {fileID: 11400000, guid: fe4ab73e9f45f6c4b97152552c6ebcbc, type: 2}
+    Button: {fileID: 1201254400}
+  - StageData: {fileID: 11400000, guid: 760eeccf552b2674fa697b30ba4868ba, type: 2}
+    Button: {fileID: 652221980}
+  - StageData: {fileID: 11400000, guid: 681d90b627a65fb4dac5b85695984e15, type: 2}
+    Button: {fileID: 616232245}
+  - StageData: {fileID: 11400000, guid: 8c960b94693266748a7eb05b57816569, type: 2}
+    Button: {fileID: 718273400}
+  - StageData: {fileID: 11400000, guid: 7d7748645453a10439942caea2cbef80, type: 2}
+    Button: {fileID: 1506266136}
+--- !u!95 &1150402032
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1150402026}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: b843e0bfbf489c841ad5172b6f715897, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1166297665
 GameObject:
   m_ObjectHideFlags: 0
@@ -2308,7 +2365,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1300126329
 MonoBehaviour:
   m_ObjectHideFlags: 0

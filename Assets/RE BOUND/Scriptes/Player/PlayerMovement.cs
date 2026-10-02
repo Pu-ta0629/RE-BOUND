@@ -97,13 +97,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (_isSceneTransition) return;
         HandleInput();
     }
 
     private void FixedUpdate()
     {
-        if (!_isLaunched)
-            return;
+        if (_isSceneTransition) return;
+        if (!_isLaunched) return;
 
         HandleMove();
         HandleRotation();
@@ -111,6 +112,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (_isSceneTransition) return;
         _bounceCount++;
 
         ContactPoint2D contact = collision.GetContact(0);
@@ -124,6 +126,7 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator PlaySE(AudioClip clip)
     {
+        if (_isSceneTransition) yield break;
         _audioSource.PlayOneShot(clip);
         //yield return new WaitForSeconds(0.15f);
         yield return null;
@@ -296,6 +299,47 @@ public class PlayerMovement : MonoBehaviour
             case Enum_RotationMode.MaxClamp:
                 _rb.angularVelocity = Mathf.Clamp(_rb.angularVelocity, -_rotateSpeed, _rotateSpeed);
                 break;
+        }
+    }
+    #endregion
+    #region SceneTransition
+    private bool _isSceneTransition = true;
+    public void BeginSceneTransition()
+    {
+        _isSceneTransition = true;
+
+        _bounceCount = 0;
+
+        _isDragging = false;
+        _isLaunched = false;
+        _isPerformance = false;
+
+        _rb.linearVelocity = Vector2.zero;
+        _rb.angularVelocity = 0f;
+
+        if (_playerIdle != null) _playerIdle.Stop();
+
+        if (_playerIdleObj != null) _playerIdleObj.SetActive(false);
+
+        _playerManager.HidePredictionLine();
+
+        foreach (Collider2D collider in GetComponents<Collider2D>())
+        {
+            collider.enabled = false;
+        }
+    }
+    public void EndSceneTransition()
+    {
+        _isSceneTransition = false;
+
+        foreach (Collider2D collider in GetComponents<Collider2D>())
+        {
+            collider.enabled = true;
+        }
+
+        if (_playerIdleObj != null)
+        {
+            _playerIdleObj.SetActive(true);
         }
     }
     #endregion

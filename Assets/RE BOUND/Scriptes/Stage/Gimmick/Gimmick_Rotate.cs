@@ -1,7 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(PolygonCollider2D))]
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(GimmickController))]
 public class Gimmick_Rotate : MonoBehaviour, IGimmick
 {
     [SerializeField] private Enum_RotateType _rotateType;

@@ -29,7 +29,6 @@ public class PlayerManager : MonoBehaviour
     private Enum_PlayerType _curretnPlayerType;
     public Enum_PlayerType PlayerType => _curretnPlayerType;
 
-
     public void Initialize(StageData stageData)
     {
         NULLCHECK();
@@ -96,7 +95,6 @@ public class PlayerManager : MonoBehaviour
 
         Debug.LogWarning($"PlayerType : {playerType} Not Found");
     }
-
     private void NULLCHECK()
     {
         if(_playerMovement == null)

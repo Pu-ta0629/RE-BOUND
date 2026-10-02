@@ -1,11 +1,16 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class StartSceneController : MonoBehaviour
 {
-    [SerializeField] private Button _game;
-    [SerializeField] private Button _stageSelect;
-    [SerializeField] private Button _quit;
+    [Header("Button")]
+    [SerializeField] private Button _gameButton;
+    [SerializeField] private Button _stageSelectButton;
+    [SerializeField] private Button _quitButton;
+
+    [Header("Animation")]
+    [SerializeField] private Animator _canvasAnimator;
 
     private void Start()
     {
@@ -13,8 +18,14 @@ public class StartSceneController : MonoBehaviour
     }
     public void Initialize()
     {
-        _game.onClick.AddListener(GameManager.Instance.LoadInGame);
-        _stageSelect.onClick.AddListener(GameManager.Instance.LoadStageSelect);
-        _quit.onClick.AddListener(GameManager.Instance.Quit);
+        _gameButton.onClick.AddListener(GameButtonAnimation);
+        _stageSelectButton.onClick.AddListener(StageSelectButtonAnimation);
+        _quitButton.onClick.AddListener(QuitButton);
     }
+    private void GameButtonAnimation() =>_canvasAnimator.SetBool("IsGame", true);
+    private void StageSelectButtonAnimation() => _canvasAnimator.SetBool("IsStageSelect", true);
+    private void QuitButton() => _canvasAnimator.SetBool("IsQuit", true);
+    public void LoadInGame() => GameManager.Instance.LoadInGame();
+    public void LoadStageSelect() => GameManager.Instance.LoadStageSelect();
+    public void LoadQuit() => GameManager.Instance.Quit();
 }

@@ -45,7 +45,7 @@ public class StageSelectManager : MonoBehaviour
         }
     }
 
-    private void SelectStage(int stageID)
+    public void SelectStage(int stageID)
     {
         GameManager.Instance.SetCurrentStage(stageID);
 
