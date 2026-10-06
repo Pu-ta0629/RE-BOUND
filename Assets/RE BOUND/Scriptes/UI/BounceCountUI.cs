@@ -4,7 +4,7 @@ using UnityEngine;
 public class BounceCountUI : MonoBehaviour
 {
     [SerializeField] private TMP_Text _text;
-
+    [SerializeField] private GameObject _stageClear;
     private int _current;
     private void Update()
     {
@@ -12,7 +12,7 @@ public class BounceCountUI : MonoBehaviour
         if (PlayerManager.Instance.Player == null) return;
         if (_current == PlayerManager.Instance.Player.BounceCount) return;
 
-        if(GameController.Instance.IsPlaying) gameObject.SetActive(true);
+        if(GameController.Instance.IsPlaying && _stageClear.activeSelf == false) gameObject.SetActive(true);
         else                                  gameObject.SetActive(false);
 
         _current = PlayerManager.Instance.Player.BounceCount;

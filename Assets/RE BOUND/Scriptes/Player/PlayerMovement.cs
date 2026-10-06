@@ -28,6 +28,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Vector2 _dragStart;
     [SerializeField] private Vector2 _dragEnd;
 
+    private int _bounceCount;
+    private int _swipeCount;
+
     private float _moveSpeed;
     private float _currentSpeed;
     private float _rotateSpeed;
@@ -38,11 +41,11 @@ public class PlayerMovement : MonoBehaviour
     private bool _isLaunched;
     private bool _isPerformance;
 
-    private int _bounceCount;
 
+    public int BounceCount => _bounceCount;
+    public int SwipeCount => _swipeCount;
     public bool IsLaunched => _isLaunched;
     public bool IsPerformance => _isPerformance;
-    public int BounceCount => _bounceCount;
 
     #region INITIALIZE
 
@@ -50,10 +53,14 @@ public class PlayerMovement : MonoBehaviour
     {
 
         Cache();
+        _bounceCount = 0;
+        _rb.simulated = true;
+        _swipeCount = 0;
 
         _moveSpeed = stageData.MoveSpeed;
         _rotateSpeed = stageData.RotateSpeed;
         _rotationMode = stageData.RotationMode;
+
 
         _currentSpeed = 0f;
 
@@ -61,7 +68,6 @@ public class PlayerMovement : MonoBehaviour
         _isLaunched = false;
         _isPerformance = false;
 
-        _bounceCount = 0;
 
         //_rb.linearVelocity = Vector2.zero;
         //_rb.angularVelocity = _rotationMode == Enum_RotationMode.Constant ? _rotateSpeed : 0f;
@@ -232,6 +238,7 @@ public class PlayerMovement : MonoBehaviour
             _rb.angularVelocity = _rotateSpeed;
         }
 
+        _swipeCount++;
         _isLaunched = true;
     }
 
@@ -301,7 +308,19 @@ public class PlayerMovement : MonoBehaviour
                 break;
         }
     }
+    public void BeginResult()
+    {
+        _isDragging = false;
+        _isPerformance = true;
+        StopPlayer();
+        _rb.simulated = false;
+
+        if (_playerIdle != null) _playerIdle.Stop();
+        if (_playerIdleObj != null) _playerIdleObj.SetActive(false);
+        _playerManager.HidePredictionLine();
+    }
     #endregion
+
     #region SceneTransition
     private bool _isSceneTransition = true;
     public void BeginSceneTransition()

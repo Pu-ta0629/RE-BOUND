@@ -11,11 +11,16 @@ public class StageData : ScriptableObject
     public Vector2 StartPos;
     public Vector2 GoalPos;
 
+    [Header("========== Star Condition ==========")]
+    public int SwipeLimit = 10;
+    public int BounceLimit = 10;
+
     [Header("========== Player ==========")]
     public Enum_PlayerType PlayerType;
 
-    [Header("Movement")] [Min(1)]
-    public float MoveSpeed = 10f;
+    [Header("Movement")]
+    [Min(1)]
+    public float MoveSpeed = 25f;
 
     [Header("Rotation")]
     public Enum_RotationMode RotationMode;
@@ -32,5 +37,5 @@ public class StageData : ScriptableObject
     [Header("Rotate")]
     public Enum_RotateType GoalRotateType = Enum_RotateType.Constant;
     public float GoalRotateSpeed = 0f;
-   
+
 }

@@ -96,30 +96,39 @@ public class SaveManager : MonoBehaviour
         return data;
     }
 
-    public void UpdateBestBounce(int stageID, int bounceCount)
+    /// ステージクリア時の記録。ベストバウンドの更新と★の保存をまとめて行う。
+    /// 一度獲得した★は消えない（再挑戦で条件を満たせなくても保持される）。
+    public StarResult RecordClear(int stageID, int bounceCount, bool bounceStar, bool swipeStar)
     {
         SaveData data = Load();
 
-        if (!_stageRecordDict.TryGetValue(stageID, out StageRecord stageRecord))
+        // _stageRecordDict の中身は data とは別のインスタンスなので、
+        // 更新する場合は必ず data 側のリストから探す
+        StageRecord record = data.StageRecords.Find(r => r.StageID == stageID);
+
+        StageStars before = ToStars(record);
+
+        if (record == null)
         {
-            stageRecord = new StageRecord
+            record = new StageRecord
             {
                 StageID = stageID,
                 BestBounceCount = bounceCount
             };
 
-            data.StageRecords.Add(stageRecord);
-            _stageRecordDict.Add(stageID, stageRecord);
+            data.StageRecords.Add(record);
         }
-        else
+        else if (bounceCount < record.BestBounceCount)
         {
-            if (bounceCount < stageRecord.BestBounceCount)
-            {
-                stageRecord.BestBounceCount = bounceCount;
-            }
+            record.BestBounceCount = bounceCount;
         }
 
+        record.BounceStar |= bounceStar;
+        record.SwipeStar |= swipeStar;
+
         Save(data);
+
+        return new StarResult(before, ToStars(record));
     }
 
     #endregion
@@ -146,6 +155,24 @@ public class SaveManager : MonoBehaviour
         _stageRecordDict.TryGetValue(stageID, out StageRecord stageRecord);
 
         return stageRecord;
+    }
+
+    // ステージごとの星の獲得状況
+    public StageStars GetStars(int stageID)
+    {
+        if (_stageRecordDict == null) BuildCache();
+
+        _stageRecordDict.TryGetValue(stageID, out StageRecord record);
+
+        return ToStars(record);
+    }
+
+    //クリアしたら★獲得。記録がなければ全て未獲得
+    private static StageStars ToStars(StageRecord record)
+    {
+        if (record == null) return StageStars.None;
+
+        return new StageStars(true, record.BounceStar, record.SwipeStar);
     }
 
     #endregion

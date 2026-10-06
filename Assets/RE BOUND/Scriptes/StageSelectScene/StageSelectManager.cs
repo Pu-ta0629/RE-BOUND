@@ -11,6 +11,8 @@ public class StageSelectManager : MonoBehaviour
         public StageData StageData;
 
         public Button Button;
+
+        public StarDisplay Stars;
     }
 
     [SerializeField] private List<StageButton> _stageButtons;
@@ -38,6 +40,9 @@ public class StageSelectManager : MonoBehaviour
             stage.Button.interactable = canPlay;
 
             int id = stage.StageData.StageID;
+
+            if (stage.Stars != null)
+                stage.Stars.Show(GameManager.Instance.SaveManager.GetStars(id));
 
             stage.Button.onClick.RemoveAllListeners();
 

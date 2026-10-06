@@ -1,4 +1,5 @@
 using TMPro;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -27,6 +28,7 @@ public class MenuUI : MonoBehaviour
 
     [Header("Stage")]
     [SerializeField] private TMP_Text _currentStageText;
+    [SerializeField] private StarDisplay _currentStageStars;
 
     [Header("Audio")]
     [SerializeField] private Toggle _bgmToggle;
@@ -224,7 +226,10 @@ public class MenuUI : MonoBehaviour
     }
     private void UpdateStageText()
     {
+        int stageID = GameManager.Instance.CurrentStageID;
         _currentStageText.text = $"STAGE {GameManager.Instance.CurrentStageID:00}";
+        if (_currentStageStars != null)
+            _currentStageStars.Show(GameManager.Instance.SaveManager.GetStars(GameManager.Instance.CurrentStageID));
     }
     #endregion
 }

@@ -7,17 +7,21 @@ public class RetryManager : MonoBehaviour
     public static RetryManager Instance { get; private set; }
 
     private bool _isRetrying;
+    public bool IsRetrying => _isRetrying;
 
-    private void Awake()
+    public void Initialize()
     {
         Instance = this;
     }
-
-    public bool IsRetrying => _isRetrying;
-
+    private void OnDisable()
+    {
+        _isRetrying = false;
+    }
     public void Retry()
     {
         if (_isRetrying) return;
+
+        if (StageProgressManager.Instance != null && StageProgressManager.Instance.IsCleared) return;
 
         StartCoroutine(RetryRoutine());
     }
