@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class StarUI : MonoBehaviour
+public class StarUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     private static readonly int UnlockHash = Animator.StringToHash("Unlock");
 
@@ -14,6 +14,54 @@ public class StarUI : MonoBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private float _unlockDuration = 0.5f;
     [SerializeField] private AnimationCurve _popCurve = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(0.6f, 1.3f), new Keyframe(1f, 1f));
+
+    private StarDisplay _owner;
+    private int _index;
+    private bool _isHovering;
+
+    #region UNITY EVENT
+
+    // ホバー中に非表示になった（メニューを閉じた等）ときは OnPointerExit が呼ばれないので、ここで消す
+    private void OnDisable()
+    {
+        if (!_isHovering) return;
+
+        _isHovering = false;
+
+        if (_owner != null) _owner.OnStarExit();
+    }
+
+    #endregion
+
+    #region TOOLTIP
+
+    // StarDisplay.Show から呼ばれる。どの★かを覚えておく
+    public void Bind(StarDisplay owner, int index)
+    {
+        _owner = owner;
+        _index = index;
+    }
+
+    // 子の On / Off 画像（Raycast Target ON）にマウスが乗ると、親であるこちらにも通知が届く
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (_owner == null) return;
+
+        _isHovering = true;
+        _owner.OnStarEnter(_index);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (_owner == null) return;
+
+        _isHovering = false;
+        _owner.OnStarExit();
+    }
+
+    #endregion
+
+    #region VIEW
 
     public void SetLit(bool lit)
     {
@@ -51,4 +99,6 @@ public class StarUI : MonoBehaviour
 
         target.localScale = Vector3.one;
     }
+
+    #endregion
 }

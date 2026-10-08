@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a08ba1f2453b6024e827678a5a46e22a, type: 3}
+  m_Name: StageDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::StageDatabase
+  _stages:
+  - {fileID: 11400000, guid: 593f846c53ff33848a4be02197dd1c89, type: 2}
+  - {fileID: 11400000, guid: f0edc3d62a736b5458ba149f0610752c, type: 2}
+  - {fileID: 11400000, guid: be5661c501582564689d4473609f6af0, type: 2}
+  - {fileID: 11400000, guid: b6fd9f8d8cbf57842bc9ae3dac2b7d3f, type: 2}
+  - {fileID: 11400000, guid: 1021ed64ac8e1ca47801caddea0cab93, type: 2}
+  - {fileID: 11400000, guid: fe4ab73e9f45f6c4b97152552c6ebcbc, type: 2}
+  - {fileID: 11400000, guid: 760eeccf552b2674fa697b30ba4868ba, type: 2}
+  - {fileID: 11400000, guid: 681d90b627a65fb4dac5b85695984e15, type: 2}
+  - {fileID: 11400000, guid: 8c960b94693266748a7eb05b57816569, type: 2}
+  - {fileID: 11400000, guid: 7d7748645453a10439942caea2cbef80, type: 2}

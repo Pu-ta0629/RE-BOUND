@@ -96,31 +96,29 @@ public class SaveManager : MonoBehaviour
         return data;
     }
 
-    /// ステージクリア時の記録。ベストバウンドの更新と★の保存をまとめて行う。
-    /// 一度獲得した★は消えない（再挑戦で条件を満たせなくても保持される）。
-    public StarResult RecordClear(int stageID, int bounceCount, bool bounceStar, bool swipeStar)
+    public StarResult RecordClear(int stageID, int bounceCount, int swipeCount, bool bounceStar, bool swipeStar)
     {
         SaveData data = Load();
 
-        // _stageRecordDict の中身は data とは別のインスタンスなので、
-        // 更新する場合は必ず data 側のリストから探す
         StageRecord record = data.StageRecords.Find(r => r.StageID == stageID);
 
         StageStars before = ToStars(record);
 
         if (record == null)
         {
-            record = new StageRecord
-            {
-                StageID = stageID,
-                BestBounceCount = bounceCount
-            };
-
+            record = new StageRecord { StageID = stageID, BestBounceCount = bounceCount };
             data.StageRecords.Add(record);
         }
         else if (bounceCount < record.BestBounceCount)
         {
             record.BestBounceCount = bounceCount;
+        }
+
+        // スワイプのベスト（旧データは記録なし扱いなので、初回は必ず保存）
+        if (!record.HasSwipeRecord || swipeCount < record.BestSwipeCount)
+        {
+            record.BestSwipeCount = swipeCount;
+            record.HasSwipeRecord = true;
         }
 
         record.BounceStar |= bounceStar;

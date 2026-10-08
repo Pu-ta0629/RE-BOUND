@@ -1,4 +1,3 @@
-using UnityEditor.Rendering;
 using UnityEngine;
 public class Gimmick_Retry : MonoBehaviour, IGimmick
 {

@@ -59,3 +59,10 @@ public enum Enum_SEPlayMode
     All,         
     Sequential   
 }
+
+public enum Enum_StarType
+{
+    Clear = 0,
+    Bounce = 1,
+    Swipe = 2
+}

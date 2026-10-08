@@ -10,4 +10,8 @@ public class StageRecord
     public bool BounceStar;
 
     public bool SwipeStar;
+
+    public int BestSwipeCount;
+
+    public bool HasSwipeRecord;
 }

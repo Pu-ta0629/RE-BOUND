@@ -24,11 +24,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private EffectManager _effectManager;
     [SerializeField] private AudioManager _audioManager;
     [SerializeField] private MenuUI _menuUI;
+    [SerializeField] private StarTooltip _starTooltip;
+    [SerializeField] private StageDatabase _stageDatabase;
+    public Camera MainCamera => _mainCamera;
     public SaveManager SaveManager => _saveManager;
     public StaticSceneAsset StartScene => _startScene;
     public StaticSceneAsset InGameScene => _inGameScene;
     public StaticSceneAsset StageSelect => _stageSelect;
-    public Camera MainCamera => _mainCamera;
+    public StageData GetStageData(int stageID) => _stageDatabase != null ? _stageDatabase.Get(stageID) : null;
 
     private void Awake()
     {
@@ -56,9 +59,12 @@ public class GameManager : MonoBehaviour
         _gameSettingsManager.Initialize();
         _effectManager.Initialize();
         _audioManager.Initialize();
+
+        Load();
+
+        _starTooltip.Initialize();
         _menuUI.Initialize();
         
-        Load();
 
         //FindFirstObjectByType<GameController>()?.Initialize();
     }

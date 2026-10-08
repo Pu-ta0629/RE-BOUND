@@ -16,6 +16,7 @@ public class StageSelectManager : MonoBehaviour
     }
 
     [SerializeField] private List<StageButton> _stageButtons;
+    [SerializeField] private bool _showStarTooltip = false;
 
     private void OnEnable()
     {
@@ -42,8 +43,10 @@ public class StageSelectManager : MonoBehaviour
             int id = stage.StageData.StageID;
 
             if (stage.Stars != null)
-                stage.Stars.Show(GameManager.Instance.SaveManager.GetStars(id));
-
+            {
+                stage.Stars.SetTooltipEnabled(_showStarTooltip);
+                stage.Stars.Show(GameManager.Instance.SaveManager.GetStars(id), id);
+            }
             stage.Button.onClick.RemoveAllListeners();
 
             stage.Button.onClick.AddListener(() =>{SelectStage(id);});

@@ -41,7 +41,7 @@ public class StageProgressManager : MonoBehaviour
         bool bounceStar = IsWithinLimit(bounceCount, stageData.BounceLimit, "BounceLimit", stageData);
         bool swipeStar = IsWithinLimit(swipeCount, stageData.SwipeLimit, "SwipeLimit", stageData);
 
-        StarResult result = gameManager.SaveManager.RecordClear(stageID, bounceCount, bounceStar, swipeStar);
+        StarResult result = gameManager.SaveManager.RecordClear(stageID, bounceCount, swipeCount, bounceStar, swipeStar);
 
         // 次のステージを解放
         int nextStage = stageID + 1;
