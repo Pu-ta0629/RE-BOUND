@@ -1,7 +1,5 @@
 using UnityEditor.Rendering;
 using UnityEngine;
-using UnityEngine.UIElements;
-
 public class Gimmick_Retry : MonoBehaviour, IGimmick
 {
     private PolygonCollider2D _collider;
@@ -32,6 +30,7 @@ public class Gimmick_Retry : MonoBehaviour, IGimmick
     }
     public void OnPlayerHit(PlayerMovement player)
     {
+        AudioManager.Instance.Play(Enum_SEType.Retry);
         RetryManager.Instance.Retry();
     }
 

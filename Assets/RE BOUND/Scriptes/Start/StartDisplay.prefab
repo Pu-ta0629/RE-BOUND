@@ -77,6 +77,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Star_Bounce
       objectReference: {fileID: 0}
+    - target: {fileID: 7666141063216391965, guid: 1b7ea538cc3d46f48b05f4fbfb0fdf31, type: 3}
+      propertyPath: _type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7666141063216391965, guid: 1b7ea538cc3d46f48b05f4fbfb0fdf31, type: 3}
+      propertyPath: _starType
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8462601880842695778, guid: 1b7ea538cc3d46f48b05f4fbfb0fdf31, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -189,6 +197,14 @@ PrefabInstance:
     - target: {fileID: 6177008209735632252, guid: 1b7ea538cc3d46f48b05f4fbfb0fdf31, type: 3}
       propertyPath: m_Name
       value: Star_Swipe
+      objectReference: {fileID: 0}
+    - target: {fileID: 7666141063216391965, guid: 1b7ea538cc3d46f48b05f4fbfb0fdf31, type: 3}
+      propertyPath: _type
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7666141063216391965, guid: 1b7ea538cc3d46f48b05f4fbfb0fdf31, type: 3}
+      propertyPath: _starType
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8462601880842695778, guid: 1b7ea538cc3d46f48b05f4fbfb0fdf31, type: 3}
       propertyPath: m_Pivot.x

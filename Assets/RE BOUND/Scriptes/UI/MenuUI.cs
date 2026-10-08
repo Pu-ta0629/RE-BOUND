@@ -1,11 +1,8 @@
 using TMPro;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static Unity.Burst.Intrinsics.X86;
-using static UnityEngine.Audio.GeneratorInstance;
 
 public class MenuUI : MonoBehaviour
 {
@@ -31,40 +28,32 @@ public class MenuUI : MonoBehaviour
     [SerializeField] private StarDisplay _currentStageStars;
 
     [Header("Audio")]
-    [SerializeField] private Toggle _bgmToggle;
     [SerializeField] private Toggle _seToggle;
-
-    [SerializeField] private Slider _bgmSlider;
     [SerializeField] private Slider _seSlider;
 
     [Header("Setting")]
-    //[SerializeField] private Toggle _vSyncToggle;
     [SerializeField] private TMP_Dropdown _fpsDropdown;
-
-    [Header("Debug")]
-    //[SerializeField] private TMP_Text _fpsText;
 
     private bool _isVisible;
     public bool IsVisible => _isVisible;
 
     #region UNITY EVENT
-    private void Start()
-    {
-        Initialize();
-    }
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
+        if (keyboard == null) return;
+
         if (keyboard.escapeKey.wasPressedThisFrame)
         {
             ToggleMenu();
         }
-        //_fpsText.text = $"FPS : {(int)GameSettingsManager.Instance.CurrentFPS}";
+
         if (keyboard.fKey.wasPressedThisFrame)
         {
             Debug.Log($"FPS : {(int)GameSettingsManager.Instance.CurrentFPS}");
-        }   
+        }
     }
+
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -99,51 +88,67 @@ public class MenuUI : MonoBehaviour
         _titleButton_StageSelect.onClick.RemoveAllListeners();
         _titleButton_StageSelect.onClick.AddListener(OpenTitle);
     }
+
     private void RegisterSettings()
     {
-        _bgmToggle.onValueChanged.RemoveAllListeners();
-        _bgmToggle.onValueChanged.AddListener(SetBGM);
+        // --- SE ---
+        if (_seToggle == null || _seSlider == null)
+        {
+            if (_seToggle == null) LogMissing(nameof(_seToggle));
+            if (_seSlider == null) LogMissing(nameof(_seSlider));
+        }
+        else
+        {
+            _seToggle.onValueChanged.RemoveAllListeners();
+            _seToggle.onValueChanged.AddListener(SetSE);
 
-        _seToggle.onValueChanged.RemoveAllListeners();
-        _seToggle.onValueChanged.AddListener(SetSE);
+            _seSlider.onValueChanged.RemoveAllListeners();
+            _seSlider.onValueChanged.AddListener(SetSEVolume);
 
-        _bgmSlider.onValueChanged.RemoveAllListeners();
-        _bgmSlider.onValueChanged.AddListener(SetBGMVolume);
+            AudioManager audioManager = AudioManager.Instance;
 
-        _seSlider.onValueChanged.RemoveAllListeners();
-        _seSlider.onValueChanged.AddListener(SetSEVolume);
+            if (audioManager == null)
+            {
+                Debug.LogError($"{name} : AudioManager.Instance is null (GameManager.Initialize で AudioManager.Initialize() を呼んでいるか確認)");
+            }
+            else
+            {
+                _seSlider.SetValueWithoutNotify(audioManager.SEVolume);
+                _seToggle.SetIsOnWithoutNotify(!audioManager.IsMuted);
+                _seSlider.gameObject.SetActive(!audioManager.IsMuted);
+            }
+        }
 
-        //_vSyncToggle.onValueChanged.RemoveAllListeners();
-        //_vSyncToggle.onValueChanged.AddListener(SetVSync);
+        //FPS
+        if (_fpsDropdown == null)
+        {
+            LogMissing(nameof(_fpsDropdown));
+        }
+        else
+        {
+            _fpsDropdown.onValueChanged.RemoveAllListeners();
+            _fpsDropdown.onValueChanged.AddListener(SetFPS);
+        }
+    }
 
-        _fpsDropdown.onValueChanged.RemoveAllListeners();
-        _fpsDropdown.onValueChanged.AddListener(SetFPS);
+    private void LogMissing(string fieldName)
+    {
+        Debug.LogError($"{name} : {fieldName} が未設定です（GameManager プレハブの MenuUI を確認）", this);
     }
     #endregion
 
     #region SETTINGS
-    private void SetBGM(bool value)
-    {
-        GameSettingsManager.Instance.SetBGMMute(!value);
-        _bgmSlider.gameObject.SetActive(value);
-    }
-    private void SetBGMVolume(float value)
-    {
-        GameSettingsManager.Instance.SetBGMVolume(value);
-    }
     private void SetSE(bool value)
     {
-        GameSettingsManager.Instance.SetSEMute(!value);
+        AudioManager.Instance.SetMute(!value);
         _seSlider.gameObject.SetActive(value);
     }
-    private void SetSEVolume(float value) 
-    { 
-        GameSettingsManager.Instance.SetSEVolume(value);
-    }
-    private void SetVSync(bool value)
+
+    private void SetSEVolume(float value)
     {
-        GameSettingsManager.Instance.SetVSync(value);
+        AudioManager.Instance.SetSEVolume(value);
     }
+
     private void SetFPS(int value)
     {
         switch (value)
@@ -165,7 +170,8 @@ public class MenuUI : MonoBehaviour
                 break;
         }
     }
-    #endregion 
+    #endregion
+
     #region MENU
     public void ToggleMenu()
     {
@@ -181,6 +187,7 @@ public class MenuUI : MonoBehaviour
         _menuRoot.SetActive(true);
         UpdateStageText();
     }
+
     public void Hide()
     {
         _isVisible = false;
@@ -218,18 +225,24 @@ public class MenuUI : MonoBehaviour
         UpdateStageText();
         Hide();
     }
+
     private void UpdateSceneUI(string sceneName)
     {
         _inGameGroup.SetActive(sceneName == "InGame");
         _stageSelectGroup.SetActive(sceneName == "StageSelect");
         _startGroup.SetActive(sceneName == "Start");
     }
+
     private void UpdateStageText()
     {
         int stageID = GameManager.Instance.CurrentStageID;
-        _currentStageText.text = $"STAGE {GameManager.Instance.CurrentStageID:00}";
+
+        _currentStageText.text = $"STAGE {stageID:00}";
+
         if (_currentStageStars != null)
-            _currentStageStars.Show(GameManager.Instance.SaveManager.GetStars(GameManager.Instance.CurrentStageID));
+        {
+            _currentStageStars.Show(GameManager.Instance.SaveManager.GetStars(stageID));
+        }
     }
     #endregion
 }

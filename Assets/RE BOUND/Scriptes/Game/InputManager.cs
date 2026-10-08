@@ -23,7 +23,13 @@ public class InputManager : MonoBehaviour
 
         if (keyboard.rKey.wasPressedThisFrame)
         {
+            AudioManager.Instance.Play(Enum_SEType.Retry);
             RetryManager.Instance.Retry();
         }
+
+        //if(keyboard.escapeKey.wasPressedThisFrame)
+        //{
+
+        //}
     }
 }

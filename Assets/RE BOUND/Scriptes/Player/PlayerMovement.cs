@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,10 +18,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Idle")]
     [SerializeField] private ParticleSystem _playerIdle;
     [SerializeField] private GameObject _playerIdleObj;
-
-    [Header("SE")]
-    [SerializeField] private AudioSource _audioSource;
-    [SerializeField] private AudioClip[] _se;
 
     [Header("Debug")]
     [SerializeField] private Vector2 _dragStart;
@@ -118,26 +113,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (!isActiveAndEnabled) return;
         if (_isSceneTransition) return;
         _bounceCount++;
 
         ContactPoint2D contact = collision.GetContact(0);
-        EffectManager.Instance.Play(Enum_EffectType.PlayerBounce, contact.point, contact.normal); 
-
-        foreach (AudioClip clip in _se)
-        {
-            StartCoroutine(PlaySE(clip));
-        }
+        EffectManager.Instance.Play(Enum_EffectType.PlayerBounce, contact.point, contact.normal);
+        AudioManager.Instance.Play(Enum_SEType.PlayerBounce);
     }
-
-    private IEnumerator PlaySE(AudioClip clip)
-    {
-        if (_isSceneTransition) yield break;
-        _audioSource.PlayOneShot(clip);
-        //yield return new WaitForSeconds(0.15f);
-        yield return null;
-    }
-
     private void OnDisable()
     {
         _trailRenderer.Clear();

@@ -56,6 +56,7 @@ public class Gimmick_Goal : MonoBehaviour, IGimmick
     public void OnPlayerHit(PlayerMovement player)
     {
         //StageProgressManager.Instance.NextStage();
+        AudioManager.Instance.Play(Enum_SEType.StageClear);
         StageProgressManager.Instance.StageClear();
     }
     public void OnPlayerMiss(PlayerMovement player){}

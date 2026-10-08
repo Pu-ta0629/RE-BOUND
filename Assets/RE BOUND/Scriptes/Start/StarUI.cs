@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class StarUI : MonoBehaviour
 {
@@ -26,6 +27,7 @@ public class StarUI : MonoBehaviour
         _offObj.SetActive(false);
         _onObj.SetActive(true);
 
+        AudioManager.Instance.Play(Enum_SEType.StarUnlock);
         if (_animator != null)
         {
             _animator.updateMode = AnimatorUpdateMode.UnscaledTime;

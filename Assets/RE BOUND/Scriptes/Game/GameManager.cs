@@ -10,14 +10,20 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private int _currentStageID;
     [SerializeField] private int _maxUnlockStage;
-
+    [Space(10)]
+    [Header("Scene")]
     [SerializeField] private StaticSceneAsset _startScene;
     [SerializeField] private StaticSceneAsset _inGameScene;
     [SerializeField] private StaticSceneAsset _stageSelect;
-    [SerializeField] private Camera _mainCamera; 
-    private SaveManager _saveManager;
-    private GameSettingsManager _gameSettingsManager;
-    private EffectManager _effectManager;
+    [Space(10)]
+    [SerializeField] private Camera _mainCamera;
+    [Space(10)]
+    [Header("Ref")]
+    [SerializeField] private SaveManager _saveManager;
+    [SerializeField] private GameSettingsManager _gameSettingsManager;
+    [SerializeField] private EffectManager _effectManager;
+    [SerializeField] private AudioManager _audioManager;
+    [SerializeField] private MenuUI _menuUI;
     public SaveManager SaveManager => _saveManager;
     public StaticSceneAsset StartScene => _startScene;
     public StaticSceneAsset InGameScene => _inGameScene;
@@ -41,13 +47,16 @@ public class GameManager : MonoBehaviour
     }
     private void Initialize()
     {
-        _saveManager = GetComponent<SaveManager>();
-        _gameSettingsManager = GetComponent<GameSettingsManager>();
-        _effectManager = GetComponentInChildren<EffectManager>();
+        //_saveManager = GetComponent<SaveManager>();
+        //_gameSettingsManager = GetComponent<GameSettingsManager>();
+        //_effectManager = GetComponentInChildren<EffectManager>();
+        //_audioManager = GetComponentInChildren<AudioManager>();
 
         _saveManager.Initialize();
         _gameSettingsManager.Initialize();
         _effectManager.Initialize();
+        _audioManager.Initialize();
+        _menuUI.Initialize();
         
         Load();
 

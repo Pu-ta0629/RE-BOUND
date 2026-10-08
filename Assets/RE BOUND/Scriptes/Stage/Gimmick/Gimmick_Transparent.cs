@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
-public class Gimmick_WallHitEffect : MonoBehaviour
+public class Gimmick_Transparent : MonoBehaviour
 {
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -11,5 +11,6 @@ public class Gimmick_WallHitEffect : MonoBehaviour
 
         //EffectManager.Instance.Play(Enum_EffectType.WallBounce, contact.point, contact.normal);
         EffectManager.Instance.PlayWallBounce(Enum_EffectType.WallBounce, contact.point, contact.normal);
+        AudioManager.Instance.Play(Enum_SEType.WallBounce);
     }
 }

@@ -42,3 +42,20 @@ public enum Enum_MovePhysicsMode
     Constant, 
     Physics
 }
+public enum Enum_SEType
+{
+    PlayerBounce,
+    PlayerLaunch,
+    WallBounce,
+    StageClear,
+    Retry,
+    StarUnlock,
+    ButtonClick
+}
+
+public enum Enum_SEPlayMode
+{
+    Random,      
+    All,         
+    Sequential   
+}

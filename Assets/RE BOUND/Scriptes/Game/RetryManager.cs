@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
 
 public class RetryManager : MonoBehaviour
@@ -29,7 +28,6 @@ public class RetryManager : MonoBehaviour
     private IEnumerator RetryRoutine()
     {
         _isRetrying = true;
-
         PlayerMovement player = PlayerManager.Instance.Player;
         EffectManager.Instance.StopAllEffects();
         player.gameObject.SetActive(false);
