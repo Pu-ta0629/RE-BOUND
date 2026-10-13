@@ -871,7 +871,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &197002577
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1317,7 +1317,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &338332760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2278,7 +2278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1067350865028763326, guid: 75814c334302f8a49a57972fe1f60a7e, type: 3}
       propertyPath: m_LocalScale.x
-      value: 30.473118
+      value: 30.470024
       objectReference: {fileID: 0}
     - target: {fileID: 1526969268512890337, guid: 75814c334302f8a49a57972fe1f60a7e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -2314,7 +2314,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2570841540507619284, guid: 75814c334302f8a49a57972fe1f60a7e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 14.736559
+      value: 14.735012
       objectReference: {fileID: 0}
     - target: {fileID: 3932389412622359458, guid: 75814c334302f8a49a57972fe1f60a7e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -2370,7 +2370,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4039440751273158979, guid: 75814c334302f8a49a57972fe1f60a7e, type: 3}
       propertyPath: m_LocalScale.x
-      value: 30.473118
+      value: 30.470024
       objectReference: {fileID: 0}
     - target: {fileID: 5031029272576224396, guid: 75814c334302f8a49a57972fe1f60a7e, type: 3}
       propertyPath: m_SizeDelta.x
@@ -2538,7 +2538,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7812016530668967218, guid: 75814c334302f8a49a57972fe1f60a7e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -14.736559
+      value: -14.735012
       objectReference: {fileID: 0}
     - target: {fileID: 7839708521335140198, guid: 75814c334302f8a49a57972fe1f60a7e, type: 3}
       propertyPath: m_fontColor.b
@@ -2635,10 +2635,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4383979980040388938, guid: 75814c334302f8a49a57972fe1f60a7e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 75814c334302f8a49a57972fe1f60a7e, type: 3}
 --- !u!4 &589555164 stripped
 Transform:
@@ -3092,7 +3089,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BounceCountUI
   _text: {fileID: 1702650343}
-  _stageClear: {fileID: 197002576}
 --- !u!1001 &704149454
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4138,7 +4134,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000
+  m_ApplyToSortingLayers: 000000004f4a7c0e
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -5028,8 +5024,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Button
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c3f3c1fb8acc9dd4a9ea6d542deb952c, type: 2}
-  m_sharedMaterial: {fileID: -387277624477926382, guid: c3f3c1fb8acc9dd4a9ea6d542deb952c, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3824e0d1b10242e42bb9735b3f0a4d35, type: 2}
+  m_sharedMaterial: {fileID: -898951254489752233, guid: 3824e0d1b10242e42bb9735b3f0a4d35, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5095,7 +5091,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1070865397
@@ -6250,6 +6246,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4278626400269479404, guid: c58e4d1f103b9ae4889240516f9618cf, type: 3}
+      propertyPath: _dragLine
+      value: 
+      objectReference: {fileID: 8693659035350012201, guid: 5deabe3be8b868744b155d80578bc4b3, type: 3}
+    - target: {fileID: 4278626400269479404, guid: c58e4d1f103b9ae4889240516f9618cf, type: 3}
       propertyPath: _stopSpeed
       value: 3
       objectReference: {fileID: 0}
@@ -6286,8 +6286,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 433764339}
     - target: {fileID: 4278626400269479404, guid: c58e4d1f103b9ae4889240516f9618cf, type: 3}
+      propertyPath: _dragStartMarker
+      value: 
+      objectReference: {fileID: 8484459972455186932, guid: 5deabe3be8b868744b155d80578bc4b3, type: 3}
+    - target: {fileID: 4278626400269479404, guid: c58e4d1f103b9ae4889240516f9618cf, type: 3}
       propertyPath: _minDragDistance
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4278626400269479404, guid: c58e4d1f103b9ae4889240516f9618cf, type: 3}
       propertyPath: _movePhysicsMode

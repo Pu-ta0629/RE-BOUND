@@ -33,6 +33,7 @@ public class MenuUI : MonoBehaviour
 
     [Header("Setting")]
     [SerializeField] private TMP_Dropdown _fpsDropdown;
+    [SerializeField] private MouseHandler _mouseHandler;
 
     private bool _isVisible;
     public bool IsVisible => _isVisible;
@@ -185,12 +186,14 @@ public class MenuUI : MonoBehaviour
     {
         _isVisible = true;
         _menuRoot.SetActive(true);
+        _mouseHandler.ClearTrail();
         UpdateStageText();
     }
 
     public void Hide()
     {
         _isVisible = false;
+        _mouseHandler.ClearTrail();
         _menuRoot.SetActive(false);
     }
     #endregion

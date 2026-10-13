@@ -9,6 +9,9 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Drag")]
     [SerializeField] private float _minDragDistance = 2f;
+    [SerializeField] private GameObject _dragStartMarker;
+    private GameObject _dragObj;
+    private LineRenderer _dragLine;
 
     [Header("Movement")]
     [SerializeField] private Enum_MovePhysicsMode _movePhysicsMode;
@@ -41,6 +44,8 @@ public class PlayerMovement : MonoBehaviour
     public int SwipeCount => _swipeCount;
     public bool IsLaunched => _isLaunched;
     public bool IsPerformance => _isPerformance;
+    public Vector2 DragStart => _dragStart;
+    public Vector2 DragEnd => _dragEnd;
 
     #region INITIALIZE
 
@@ -79,6 +84,17 @@ public class PlayerMovement : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _trailRenderer = GetComponent<TrailRenderer>();
+
+        if (_dragObj == null)
+        {
+            _dragObj = Instantiate(_dragStartMarker);
+            _dragLine = _dragObj.GetComponent<LineRenderer>();
+            _dragObj.transform.localScale = new Vector2(_minDragDistance * 2, _minDragDistance * 2);
+            _dragObj.SetActive(false);
+        }
+        _dragLine.positionCount = 0;
+        if(_dragLine.useWorldSpace == false)
+            _dragLine.useWorldSpace = true;
     }
 
     private void NULLCHECK()
@@ -87,15 +103,17 @@ public class PlayerMovement : MonoBehaviour
             Debug.LogWarning($"{name} : Rigidbody2D not found");
         if (_trailRenderer == null)
             Debug.LogWarning($"{name} : TrailRenderer not found");
-
         if (_playerManager == null)
             Debug.LogWarning($"{name} : PlayerManager not found");
+        if (_dragStartMarker == null)
+            Debug.LogWarning($"{name} : DragStartMarker not found");
+        if (_dragLine == null)
+            Debug.LogWarning($"{name} : DragLineRenderer not found");
     }
 
     #endregion
 
     #region UNITY EVENT
-
     private void Update()
     {
         if (_isSceneTransition) return;
@@ -141,16 +159,27 @@ public class PlayerMovement : MonoBehaviour
         if (mouse == null)
             return;
 
+        //start drag
         if (mouse.leftButton.wasPressedThisFrame)
         {
             _dragStart = GetMouseWorldPosition();
             _isDragging = true;
+            
+            _dragObj.transform.position = _dragStart;
+            _dragObj.SetActive(true);
+
+            _dragLine.positionCount = 2;
+            
         }
 
         if (_isDragging)
         {
-            Vector2 direction = _dragStart - GetMouseWorldPosition();
+            Vector2 mousePos = GetMouseWorldPosition();
 
+            _dragLine.SetPosition(0, _dragStart);
+            _dragLine.SetPosition(1, mousePos);
+
+            Vector2 direction = _dragStart - mousePos;
             if (IsValidDrag(direction))
             {
                 _playerManager.DrawPredictionLine(transform.position, direction);
@@ -161,9 +190,14 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        //end drag
         if (mouse.leftButton.wasReleasedThisFrame && _isDragging)
         {
             _dragEnd = GetMouseWorldPosition();
+
+            _dragObj.SetActive(false);
+
+            _dragLine.positionCount = 0;
 
             _playerManager.HidePredictionLine();
 
@@ -274,6 +308,9 @@ public class PlayerMovement : MonoBehaviour
         _rb.angularVelocity = 0f;
 
         _isLaunched = false;
+
+        _dragObj.SetActive(false);
+        _dragLine.positionCount = 0;
     }
     private void HandleRotation()
     {
@@ -295,11 +332,14 @@ public class PlayerMovement : MonoBehaviour
     {
         _isDragging = false;
         _isPerformance = true;
+
         StopPlayer();
+
         _rb.simulated = false;
 
-        if (_playerIdle != null) _playerIdle.Stop();
-        if (_playerIdleObj != null) _playerIdleObj.SetActive(false);
+        _playerIdle.Stop();
+        _playerIdleObj.SetActive(false);
+        _dragLine.positionCount = 0;
         _playerManager.HidePredictionLine();
     }
     #endregion
@@ -318,6 +358,8 @@ public class PlayerMovement : MonoBehaviour
 
         _rb.linearVelocity = Vector2.zero;
         _rb.angularVelocity = 0f;
+
+        _dragLine.positionCount = 0;
 
         if (_playerIdle != null) _playerIdle.Stop();
 

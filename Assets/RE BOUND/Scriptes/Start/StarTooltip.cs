@@ -72,7 +72,8 @@ public class StarTooltip : MonoBehaviour
         _text.text = BuildMessage(type, stageID);
 
         _root.SetActive(true);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(_rect);   // 文字数に合わせて大きさを確定させる
+        //Automatically adjusts size to fit the character
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_rect); 
 
         _isVisible = true;
         UpdatePosition();

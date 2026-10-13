@@ -55,13 +55,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   _playerManager: {fileID: 0}
   _minDragDistance: 2
+  _dragStartMarker: {fileID: 8484459972455186932, guid: 5deabe3be8b868744b155d80578bc4b3, type: 3}
+  _dragLine: {fileID: 8693659035350012201, guid: 5deabe3be8b868744b155d80578bc4b3, type: 3}
   _movePhysicsMode: 0
   _deceleration: 0.985
   _stopSpeed: 0.2
   _playerIdle: {fileID: 1026966958411346734}
   _playerIdleObj: {fileID: 8710303740248746560}
-  _audioSource: {fileID: 0}
-  _se: []
   _dragStart: {x: 0, y: 0}
   _dragEnd: {x: 0, y: 0}
 --- !u!212 &2729724062950841472
