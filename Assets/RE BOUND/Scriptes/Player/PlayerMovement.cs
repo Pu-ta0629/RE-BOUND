@@ -176,8 +176,20 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector2 mousePos = GetMouseWorldPosition();
 
-            _dragLine.SetPosition(0, _dragStart);
-            _dragLine.SetPosition(1, mousePos);
+            //DragMarker
+            Vector2 dir = (mousePos - _dragStart).normalized;
+            float distance = (mousePos - _dragStart).magnitude;
+            float radius = _dragObj.transform.localScale.x * 0.5f;
+            Vector2 lineStart = _dragStart + dir * radius;
+            _dragLine.SetPosition(0, lineStart);
+            if (distance <= radius)
+            {
+                _dragLine.SetPosition(1, lineStart);
+            }
+            else
+            {
+                _dragLine.SetPosition(1, mousePos);
+            }
 
             Vector2 direction = _dragStart - mousePos;
             if (IsValidDrag(direction))
