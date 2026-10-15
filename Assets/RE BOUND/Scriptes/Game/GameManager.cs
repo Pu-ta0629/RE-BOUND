@@ -1,72 +1,103 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public int CurrentStageID { get; private set; }
-    public int MaxUnlockStage { get; private set; }
-
+    [Header("RE:BOUND")]
     [SerializeField] private int _currentStageID;
     [SerializeField] private int _maxUnlockStage;
+    public int CurrentStageID { get; private set; }
+    public int MaxUnlockStage { get; private set; }
     [Space(10)]
-    [Header("Scene")]
-    [SerializeField] private StaticSceneAsset _startScene;
-    [SerializeField] private StaticSceneAsset _inGameScene;
-    [SerializeField] private StaticSceneAsset _stageSelect;
-    [Space(10)]
+
+
     [SerializeField] private Camera _mainCamera;
-    [Space(10)]
-    [Header("Ref")]
-    [SerializeField] private SaveManager _saveManager;
-    [SerializeField] private GameSettingsManager _gameSettingsManager;
-    [SerializeField] private EffectManager _effectManager;
-    [SerializeField] private AudioManager _audioManager;
-    [SerializeField] private MenuUI _menuUI;
-    [SerializeField] private StarTooltip _starTooltip;
-    [SerializeField] private StageDatabase _stageDatabase;
     public Camera MainCamera => _mainCamera;
+    [Space(10)]
+
+    [Header("Ref")]
+    [SerializeField] private AudioManager _audioManager;
+    [SerializeField] private EffectManager _effectManager;
+    [SerializeField] private GameController _gameController;
+    [SerializeField] private GameSettingsManager _gameSettingsManager;
+    [SerializeField] private MenuUI _menuUI;
+    [SerializeField] private StageDatabase _stageDatabase;
+    [SerializeField] private StarTooltip _starTooltip;
+    [SerializeField] private StateManager _stateManager;
+    [SerializeField] private SaveManager _saveManager;
+
     public SaveManager SaveManager => _saveManager;
-    public StaticSceneAsset StartScene => _startScene;
-    public StaticSceneAsset InGameScene => _inGameScene;
-    public StaticSceneAsset StageSelect => _stageSelect;
     public StageData GetStageData(int stageID) => _stageDatabase != null ? _stageDatabase.Get(stageID) : null;
 
+    // 唯一のAwake
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+
+        if (!NULLCHECK()) return; //not true
 
         Initialize();
+
         _currentStageID = CurrentStageID;
         _maxUnlockStage = MaxUnlockStage;
-
     }
+
     private void Initialize()
     {
-        //_saveManager = GetComponent<SaveManager>();
-        //_gameSettingsManager = GetComponent<GameSettingsManager>();
-        //_effectManager = GetComponentInChildren<EffectManager>();
-        //_audioManager = GetComponentInChildren<AudioManager>();
-
         _saveManager.Initialize();
         _gameSettingsManager.Initialize();
         _effectManager.Initialize();
         _audioManager.Initialize();
 
+        //セーブデータ
         Load();
 
-        _starTooltip.Initialize();
-        _menuUI.Initialize();
-        
+        //ゲーム本体
+        _gameController.Initialize();
 
-        //FindFirstObjectByType<GameController>()?.Initialize();
+        //UI更新
+        _starTooltip.Initialize();
+
+        //State(ゲーム管理
+        _stateManager.Initialize();
+
+        //Stateに応じてMenuを変化させるためStateの後
+        _menuUI.Initialize();
+
+        //ここで画面表示
+        _stateManager.Begin();
+    }
+
+    private bool NULLCHECK()
+    {
+        bool ok = true;
+
+        ok &= CHECK(_saveManager, nameof(_saveManager));
+        ok &= CHECK(_gameSettingsManager, nameof(_gameSettingsManager));
+        ok &= CHECK(_effectManager, nameof(_effectManager));
+        ok &= CHECK(_audioManager, nameof(_audioManager));
+        ok &= CHECK(_gameController, nameof(_gameController));
+        ok &= CHECK(_starTooltip, nameof(_starTooltip));
+        ok &= CHECK(_stateManager, nameof(_stateManager));
+        ok &= CHECK(_menuUI, nameof(_menuUI));
+        ok &= CHECK(_mainCamera, nameof(_mainCamera));
+
+        return ok;
+    }
+
+    private bool CHECK(Object target, string fieldName)
+    {
+        if (target != null) return true;
+
+        Debug.LogError($"{this.name} : {fieldName} が未設定です");
+        return false;
     }
 
     #region Stage
@@ -74,55 +105,44 @@ public class GameManager : MonoBehaviour
     public void SetCurrentStage(int stageID)
     {
         CurrentStageID = stageID;
+        _currentStageID = stageID;
     }
 
     public void UnlockStage(int stageID)
     {
-        if (stageID < MaxUnlockStage)
-            return;
+        if (stageID < MaxUnlockStage) return;
 
         MaxUnlockStage = stageID;
+        _maxUnlockStage = stageID;
 
         Save();
     }
 
     #endregion
 
-    #region Scene
+    #region ChangeState
 
-    public void LoadStart()
-    {
-        EffectManager.Instance?.StopAllEffects();
-        Debug.Log("LOAD SATRT");
-        SceneManager.LoadScene(_startScene.Value);
-    }
+    public void GoTitle() => StateManager.Instance.ChangeState(Enum_GameState.Title);
 
-    public void LoadStageSelect()
-    {
-        EffectManager.Instance?.StopAllEffects();
-        Debug.Log("LOAD STAGE SELECT");
-        SceneManager.LoadScene(_stageSelect.Value);
-    }
+    public void GoStageSelect() => StateManager.Instance.ChangeState(Enum_GameState.StageSelect);
 
-    public void LoadInGame()
-    {
-        EffectManager.Instance?.StopAllEffects();
-        Debug.Log("LOAD INGAME");
-        SceneManager.LoadScene(_inGameScene.Value);
-    }
+    public void GoInGame() => StateManager.Instance.ChangeState(Enum_GameState.InGame);
 
     #endregion
 
     #region Save
-    //保存
+    //Play内容をセーブ（保存）
     public void Save()
     {
         SaveData data = _saveManager.Load();
+
         data.CurrentStageID = CurrentStageID;
         data.MaxUnlockedStage = MaxUnlockStage;
+
         _saveManager.Save(data);
     }
-    //保存データの読み込み
+
+    //セーブデータのロード（読み込み）
     public void Load()
     {
         SaveData data = _saveManager.Load();
@@ -137,12 +157,11 @@ public class GameManager : MonoBehaviour
     public void Quit()
     {
         Debug.Log("END GAME");
-        //UnityEditor と Application時に終了の処理を変える
-        #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-        #else
-                Application.Quit();
-        #endif
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
-#endregion
+    #endregion
 }

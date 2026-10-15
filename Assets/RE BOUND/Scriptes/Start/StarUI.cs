@@ -42,7 +42,6 @@ public class StarUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         _index = index;
     }
 
-    // 子の On / Off 画像（Raycast Target ON）にマウスが乗ると、親であるこちらにも通知が届く
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (_owner == null) return;

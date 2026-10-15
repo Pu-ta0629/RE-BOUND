@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/RE BOUND/Scenes/REBOUND.unity
+    guid: 0ba26db752e52044399556c0747fc613
+  - enabled: 1
     path: Assets/RE BOUND/Scenes/Start.unity
     guid: bd6aa9556b7e1c44988fce4d201a8dff
   - enabled: 1

@@ -1094,7 +1094,7 @@ Transform:
   m_GameObject: {fileID: 1631851163046626351}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -14.757425, y: 0, z: 10}
+  m_LocalPosition: {x: -14.705882, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 18, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2509,7 +2509,7 @@ Transform:
   m_GameObject: {fileID: 3675921403415344077}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 14.757425, y: 0, z: 10}
+  m_LocalPosition: {x: 14.705882, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 18, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2676,7 +2676,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -8.5, z: 10}
-  m_LocalScale: {x: 30.51485, y: 1, z: 1}
+  m_LocalScale: {x: 30.411764, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1285023326167987639}
@@ -3068,7 +3068,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 8.5, z: 10}
-  m_LocalScale: {x: 30.51485, y: 1, z: 1}
+  m_LocalScale: {x: 30.411764, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1285023326167987639}
@@ -4498,17 +4498,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   _currentStageID: 0
   _maxUnlockStage: 0
-  _startScene: {fileID: 11400000, guid: cee8a1c78170e934e8c05d67b3a89a65, type: 2}
-  _inGameScene: {fileID: 11400000, guid: 317ee20fa52f9314987cf30c1ed8b591, type: 2}
-  _stageSelect: {fileID: 11400000, guid: 2bbfb13b4664a5043a54b706fcf4c000, type: 2}
   _mainCamera: {fileID: 8442819345175698157}
-  _saveManager: {fileID: 7656154671166050307}
-  _gameSettingsManager: {fileID: 8079567790152380647}
-  _effectManager: {fileID: 8236230171735772311}
   _audioManager: {fileID: 5408063880164498014}
+  _effectManager: {fileID: 8236230171735772311}
+  _gameController: {fileID: 0}
+  _gameSettingsManager: {fileID: 8079567790152380647}
   _menuUI: {fileID: 8342247551779875181}
-  _starTooltip: {fileID: 1995539321981680941}
   _stageDatabase: {fileID: 11400000, guid: c687be5602e6eba4a9f520def852a952, type: 2}
+  _starTooltip: {fileID: 1995539321981680941}
+  _stateManager: {fileID: 0}
+  _saveManager: {fileID: 7656154671166050307}
 --- !u!114 &7656154671166050307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4547,7 +4546,6 @@ MonoBehaviour:
   _seToggle: {fileID: 7401034637949741642}
   _seSlider: {fileID: 4041806870542458924}
   _fpsDropdown: {fileID: 5862308368906806669}
-  _mouseHandler: {fileID: 883432299016042800}
 --- !u!114 &8079567790152380647
 MonoBehaviour:
   m_ObjectHideFlags: 0

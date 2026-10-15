@@ -40,7 +40,7 @@ public class GameSettingsManager : MonoBehaviour
     {
         _isPaused = pause;
 
-        //Time.timeScale = pause ? 0f : 1f;
+        Time.timeScale = pause ? 0f : 1f;
     }
     public void TogglePause()
     {

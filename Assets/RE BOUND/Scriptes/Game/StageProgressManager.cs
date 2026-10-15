@@ -21,8 +21,15 @@ public class StageProgressManager : MonoBehaviour
         _stageClearUI.Initialize();
     }
 
+    // クリア画面や状態を残さないように
+    public void ResetState()
+    {
+        _isCleared = false;
+        _stageClearUI.Hide();
+    }
+
     #region CLEAR
-    public void StageClear() // next stage transition
+    public void StageClear()
     {
         if (_isCleared) return;
         _isCleared = true;
@@ -52,7 +59,7 @@ public class StageProgressManager : MonoBehaviour
             gameManager.UnlockStage(nextStage);
         }
 
-        // ★の獲得演出 → 演出後にボタン表示 → 押したら GoNext
+        // Startの獲得演出 → 演出後にボタン表示 → 押したら NextStageへ
         _stageClearUI.Show(stageID, result, hasNext, () => GoNext(nextStage, hasNext));
     }
 
@@ -76,14 +83,13 @@ public class StageProgressManager : MonoBehaviour
 
         if (!hasNext)
         {
-            GameManager.Instance.LoadStart();
+            GameManager.Instance.GoTitle();
             return;
         }
 
         GameManager.Instance.SetCurrentStage(nextStage);
-        StageManager.Instance.LoadStage(nextStage);
+        GameController.Instance.LoadStage(nextStage);
 
-        FindFirstObjectByType<GimmickManager>().Initialize();
         RetryManager.Instance.Retry();
     }
 

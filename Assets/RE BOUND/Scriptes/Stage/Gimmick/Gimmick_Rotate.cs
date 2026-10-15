@@ -10,6 +10,11 @@ public class Gimmick_Rotate : MonoBehaviour, IGimmick
     private Rigidbody2D _rb;
     private PolygonCollider2D _collider;
     private SpriteRenderer _spriteRenderer;
+
+    // OnActiveEvent Ç≈ïÑçÜÇ™îΩì]Ç∑ÇÈÇÃÇ≈ÅAç≈èâÇÃë¨ìxÇäoÇ¶ÇƒÇ®Ç¢Çƒì¸ÇËíºÇ∑ÇΩÇ—Ç…ñﬂÇ∑
+    private float _initialRotateSpeed;
+    private bool _isSpeedCached;
+
     public void Initialize()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -18,10 +23,17 @@ public class Gimmick_Rotate : MonoBehaviour, IGimmick
 
         NULLCHECK();
 
-        //_rb.constraints = RigidbodyConstraints2D.FreezePosition;
+        if (!_isSpeedCached)
+        {
+            _initialRotateSpeed = _rotateSpeed;
+            _isSpeedCached = true;
+        }
+
+        _rotateSpeed = _initialRotateSpeed;
 
         _collider.autoTiling = true;
         _collider.CreateFromSprite(_spriteRenderer.sprite);
+
         if (_rotateType == Enum_RotateType.Physics && _rb != null)
         {
             _rb.angularVelocity = _rotateSpeed;
@@ -35,7 +47,10 @@ public class Gimmick_Rotate : MonoBehaviour, IGimmick
         _rotateType = rotateType;
         _rotateSpeed = rotateSpeed;
 
-        if (_rotateType == Enum_RotateType.Physics)
+        _initialRotateSpeed = rotateSpeed;
+        _isSpeedCached = true;
+
+        if (_rotateType == Enum_RotateType.Physics && _rb != null)
         {
             _rb.angularVelocity = _rotateSpeed;
             _rb.mass = 0.0001f;
@@ -45,7 +60,7 @@ public class Gimmick_Rotate : MonoBehaviour, IGimmick
 
     private void NULLCHECK()
     {
-        if(_rb == null)
+        if (_rb == null)
         {
             Debug.LogWarning($"{this.name} : Rigidbody not found");
         }
@@ -72,9 +87,9 @@ public class Gimmick_Rotate : MonoBehaviour, IGimmick
         }
     }
 
-    public void OnPlayerHit(PlayerMovement player){}
+    public void OnPlayerHit(PlayerMovement player) { }
 
-    public void OnPlayerMiss(PlayerMovement player){}
+    public void OnPlayerMiss(PlayerMovement player) { }
 
     public void OnActiveEvent()
     {

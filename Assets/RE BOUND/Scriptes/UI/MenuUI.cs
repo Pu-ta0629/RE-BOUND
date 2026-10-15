@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MenuUI : MonoBehaviour
@@ -9,10 +8,10 @@ public class MenuUI : MonoBehaviour
     [Header("Root")]
     [SerializeField] private GameObject _menuRoot;
 
-    [Header("Scene Group")]
-    [SerializeField] private GameObject _inGameGroup;
-    [SerializeField] private GameObject _stageSelectGroup;
-    [SerializeField] private GameObject _startGroup;
+    [Header("State Group")]
+    [SerializeField] private GameObject _inGameGroup;       // InGame 用ボタン群
+    [SerializeField] private GameObject _stageSelectGroup;  // StageSelect 用ボタン群
+    [SerializeField] private GameObject _startGroup;        // Title 用ボタン群
 
     [Header("Tutorial")]
     [SerializeField] private GameObject _tutorialPanel;
@@ -33,12 +32,13 @@ public class MenuUI : MonoBehaviour
 
     [Header("Setting")]
     [SerializeField] private TMP_Dropdown _fpsDropdown;
-    [SerializeField] private MouseHandler _mouseHandler;
 
     private bool _isVisible;
+    private StateManager _subscribed;
     public bool IsVisible => _isVisible;
 
     #region UNITY EVENT
+
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
@@ -57,25 +57,50 @@ public class MenuUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        Unrequest();
     }
+
     #endregion
 
     #region INITIALIZE
+
+    //StateManager.Initialize の後
+    //Stateによって表示させるMenuが違うため
     public void Initialize()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        Request();
 
         RegisterButtons();
         RegisterSettings();
 
-        _tutorialPanel.SetActive(false);
+        if (_tutorialPanel != null) _tutorialPanel.SetActive(false);
 
-        UpdateSceneUI(SceneManager.GetActiveScene().name);
+        UpdateStateUI(Enum_GameState.None);
         UpdateStageText();
 
         Hide();
+    }
+
+    private void Request()
+    {
+        Unrequest();
+
+        if (StateManager.Instance == null)
+        {
+            Debug.LogError($"{name} : StateManager.Instance is null (StateManager.Initialize を先に呼ぶ)", this);
+            return;
+        }
+
+        _subscribed = StateManager.Instance;
+        _subscribed.OnStateChanged += OnStateChanged;
+    }
+
+    private void Unrequest()
+    {
+        if (_subscribed == null) return;
+
+        _subscribed.OnStateChanged -= OnStateChanged;
+        _subscribed = null;
     }
 
     private void RegisterButtons()
@@ -114,13 +139,14 @@ public class MenuUI : MonoBehaviour
             }
             else
             {
+                // トグル ON = 音が出る（ミュートの逆）
                 _seSlider.SetValueWithoutNotify(audioManager.SEVolume);
                 _seToggle.SetIsOnWithoutNotify(!audioManager.IsMuted);
                 _seSlider.gameObject.SetActive(!audioManager.IsMuted);
             }
         }
 
-        //FPS
+        // --- FPS ---
         if (_fpsDropdown == null)
         {
             LogMissing(nameof(_fpsDropdown));
@@ -134,8 +160,9 @@ public class MenuUI : MonoBehaviour
 
     private void LogMissing(string fieldName)
     {
-        Debug.LogError($"{name} : {fieldName} が未設定です（GameManager プレハブの MenuUI を確認）", this);
+        Debug.LogError($"{this.name} : {fieldName} not found");
     }
+
     #endregion
 
     #region SETTINGS
@@ -154,21 +181,10 @@ public class MenuUI : MonoBehaviour
     {
         switch (value)
         {
-            case 0:
-                GameSettingsManager.Instance.SetFPS(30);
-                break;
-
-            case 1:
-                GameSettingsManager.Instance.SetFPS(60);
-                break;
-
-            case 2:
-                GameSettingsManager.Instance.SetFPS(144);
-                break;
-
-            case 3:
-                GameSettingsManager.Instance.SetFPS(-1);
-                break;
+            case 0: GameSettingsManager.Instance.SetFPS(30); break;
+            case 1: GameSettingsManager.Instance.SetFPS(60); break;
+            case 2: GameSettingsManager.Instance.SetFPS(144); break;
+            case 3: GameSettingsManager.Instance.SetFPS(-1); break;
         }
     }
     #endregion
@@ -186,15 +202,16 @@ public class MenuUI : MonoBehaviour
     {
         _isVisible = true;
         _menuRoot.SetActive(true);
-        _mouseHandler.ClearTrail();
         UpdateStageText();
     }
 
     public void Hide()
     {
         _isVisible = false;
-        _mouseHandler.ClearTrail();
         _menuRoot.SetActive(false);
+
+        if (StarTooltip.Instance != null)
+            StarTooltip.Instance.Hide();
     }
     #endregion
 
@@ -209,7 +226,7 @@ public class MenuUI : MonoBehaviour
         Hide();
 
         GameSettingsManager.Instance.SetPause(false);
-        GameManager.Instance.LoadStageSelect();
+        GameManager.Instance.GoStageSelect();
     }
 
     private void OpenTitle()
@@ -217,23 +234,25 @@ public class MenuUI : MonoBehaviour
         Hide();
 
         GameSettingsManager.Instance.SetPause(false);
-        GameManager.Instance.LoadStart();
+        GameManager.Instance.GoTitle();
     }
     #endregion
 
-    #region SCENE
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    #region STATE
+    private void OnStateChanged(Enum_GameState state)
     {
-        UpdateSceneUI(scene.name);
+        UpdateStateUI(state);
         UpdateStageText();
+
+        GameSettingsManager.Instance.SetPause(false);
         Hide();
     }
 
-    private void UpdateSceneUI(string sceneName)
+    private void UpdateStateUI(Enum_GameState state)
     {
-        _inGameGroup.SetActive(sceneName == "InGame");
-        _stageSelectGroup.SetActive(sceneName == "StageSelect");
-        _startGroup.SetActive(sceneName == "Start");
+        _inGameGroup.SetActive(state == Enum_GameState.InGame);
+        _stageSelectGroup.SetActive(state == Enum_GameState.StageSelect);
+        _startGroup.SetActive(state == Enum_GameState.Title);
     }
 
     private void UpdateStageText()
@@ -244,7 +263,7 @@ public class MenuUI : MonoBehaviour
 
         if (_currentStageStars != null)
         {
-            _currentStageStars.Show(GameManager.Instance.SaveManager.GetStars(stageID));
+            _currentStageStars.Show(GameManager.Instance.SaveManager.GetStars(stageID), stageID);
         }
     }
     #endregion

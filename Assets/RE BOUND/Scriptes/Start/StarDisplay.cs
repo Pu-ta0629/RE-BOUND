@@ -1,10 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// ★3個の表示。Menu・StageSelectの各ステージ・クリア画面で同じものを使い回す。
-/// _stars の並び: 0 = クリア★ / 1 = バウンド★ / 2 = スワイプ★
-/// </summary>
 public class StarDisplay : MonoBehaviour
 {
     [SerializeField] private StarUI[] _stars = new StarUI[StageStars.StarCount];

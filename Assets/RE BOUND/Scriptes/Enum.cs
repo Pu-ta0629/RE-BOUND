@@ -1,3 +1,20 @@
+#region GAME STATE
+public enum Enum_GameState
+{
+    None, 
+    Title, 
+    StageSelect, 
+    InGame
+}
+
+public enum Enum_ViewMode
+{
+    //GameObject ごとに ON/OFF。Updateも止まるので処理が重い画面向き（InGame
+    SetActive, 
+    // alpha / interactable / blockRaycast だけ切り替える。フェード演出向き（UI）
+    CanvasGroup
+}
+#endregion
 #region PLAYER
 public enum Enum_PlayerType
 {
@@ -63,11 +80,11 @@ public enum Enum_SEPlayMode
     Sequential   
 }
 #endregion
-
-
+#region STAR
 public enum Enum_StarType
 {
     Clear = 0,
     Bounce = 1,
     Swipe = 2
 }
+#endregion

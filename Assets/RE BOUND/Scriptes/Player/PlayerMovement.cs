@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -122,6 +123,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (GameController.Instance == null) return;
+        if (!GameController.Instance.IsPlaying) return;
         if (_isSceneTransition) return;
         if (!_isLaunched) return;
 
@@ -139,11 +142,19 @@ public class PlayerMovement : MonoBehaviour
         EffectManager.Instance.Play(Enum_EffectType.PlayerBounce, contact.point, contact.normal);
         AudioManager.Instance.Play(Enum_SEType.PlayerBounce);
     }
+    private void OnEnable()
+    {
+        TrailRendererClear();
+    }
     private void OnDisable()
     {
+        TrailRendererClear();
+    }
+    public void TrailRendererClear()
+    {
+        _trailRenderer = GetComponent<TrailRenderer>();
         _trailRenderer.Clear();
     }
-
     #endregion
 
     #region INPUT
@@ -273,8 +284,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsValidDrag(Vector2 direction)
     {
-        return direction.sqrMagnitude >=
-               _minDragDistance * _minDragDistance;
+        return direction.sqrMagnitude >= _minDragDistance * _minDragDistance;
     }
 
     private void HandleMove()

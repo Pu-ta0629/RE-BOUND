@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,23 +9,73 @@ public class StartSceneController : MonoBehaviour
     [SerializeField] private Button _stageSelectButton;
     [SerializeField] private Button _quitButton;
 
-    [Header("Animation")]
-    [SerializeField] private Animator _canvasAnimator;
+    [Header("Animation (Animatorは使わず、コードで再生)")]
+    [SerializeField] private GameObject _animationTarget;
 
-    private void Start()
+    [Tooltip("Do not play if the AnimationClip is null")]
+    [SerializeField] private AnimationClip _introClip;
+    [SerializeField] private AnimationClip _gameClip;           
+    [SerializeField] private AnimationClip _stageSelectClip;    
+    [SerializeField] private AnimationClip _quitClip;           
+
+    private bool _isRegistered;
+    private bool _isBusy;
+    private Coroutine _routine;
+
+    private GameObject Target => _animationTarget != null ? _animationTarget : gameObject;
+
+    // TitleState に入るたびに呼ばれる（位置/Scaleの復元は GameStateBase.Enter が済ませている）
+    public void Begin()
     {
-        Initialize();
+        RegisterOnce();
+
+        if (_routine != null) StopCoroutine(_routine);
+
+        _routine = StartCoroutine(IntroRoutine());
     }
-    public void Initialize()
+
+    private void RegisterOnce()
     {
-        _gameButton.onClick.AddListener(GameButtonAnimation);
-        _stageSelectButton.onClick.AddListener(StageSelectButtonAnimation);
-        _quitButton.onClick.AddListener(QuitButton);
+        if (_isRegistered) return;
+        _isRegistered = true;
+
+        _gameButton.onClick.AddListener(() => Play(_gameClip, LoadInGame));
+        _stageSelectButton.onClick.AddListener(() => Play(_stageSelectClip, LoadStageSelect));
+        _quitButton.onClick.AddListener(() => Play(_quitClip, LoadQuit));
     }
-    private void GameButtonAnimation() =>_canvasAnimator.SetBool("IsGame", true);
-    private void StageSelectButtonAnimation() => _canvasAnimator.SetBool("IsStageSelect", true);
-    private void QuitButton() => _canvasAnimator.SetBool("IsQuit", true);
-    public void LoadInGame() => GameManager.Instance.LoadInGame();
-    public void LoadStageSelect() => GameManager.Instance.LoadStageSelect();
+
+    private IEnumerator IntroRoutine()
+    {
+        _isBusy = true;
+
+        yield return ClipPlayer.Play(Target, _introClip);
+
+        _isBusy = false;
+        _routine = null;
+    }
+
+    // 退出アニメを再生して、終わったら次の処理（旧: AnimationEvent の代わり）
+    private void Play(AnimationClip clip, System.Action onFinished)
+    {
+        if (_isBusy) return;
+
+        if (_routine != null) StopCoroutine(_routine);
+
+        _routine = StartCoroutine(ExitRoutine(clip, onFinished));
+    }
+
+    private IEnumerator ExitRoutine(AnimationClip clip, System.Action onFinished)
+    {
+        _isBusy = true;
+
+        yield return ClipPlayer.Play(Target, clip);
+
+        _routine = null;
+        onFinished?.Invoke();   // 画面を切り替えても _isBusy は Begin() で戻る
+    }
+
+    // 外部/AnimationEventからも呼べるように名前は残す
+    public void LoadInGame() => GameManager.Instance.GoInGame();
+    public void LoadStageSelect() => GameManager.Instance.GoStageSelect();
     public void LoadQuit() => GameManager.Instance.Quit();
 }

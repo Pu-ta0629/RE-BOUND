@@ -17,6 +17,7 @@ public class Gimmick_Move : MonoBehaviour, IGimmick
     public void Initialize()
     {
         _startPosition = transform.position;
+        _direction = 1;
 
         _collider = GetComponent<PolygonCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -26,6 +27,7 @@ public class Gimmick_Move : MonoBehaviour, IGimmick
         _collider.autoTiling = true;
         _collider.CreateFromSprite(_spriteRenderer.sprite);
     }
+
     public void InitializeGoal(Enum_MoveType moveType, float moveSpeed, float moveRange, Vector2 freeDirection)
     {
         _moveType = moveType;
@@ -34,7 +36,9 @@ public class Gimmick_Move : MonoBehaviour, IGimmick
         _freeDirection = freeDirection;
 
         _startPosition = transform.position;
+        _direction = 1;
     }
+
     private void NULLCHECK()
     {
         if (_collider == null)
@@ -47,6 +51,7 @@ public class Gimmick_Move : MonoBehaviour, IGimmick
             Debug.LogWarning($"{this.name} : SpriteRenderer not found");
         }
     }
+
     public void Move()
     {
         if (GameController.Instance == null) return;
@@ -75,9 +80,9 @@ public class Gimmick_Move : MonoBehaviour, IGimmick
         };
     }
 
-    public void OnPlayerHit(PlayerMovement player){}
+    public void OnPlayerHit(PlayerMovement player) { }
 
-    public void OnPlayerMiss(PlayerMovement player){}
+    public void OnPlayerMiss(PlayerMovement player) { }
 
     public void OnActiveEvent()
     {

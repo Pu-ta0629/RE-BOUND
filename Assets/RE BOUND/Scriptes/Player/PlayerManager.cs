@@ -42,6 +42,8 @@ public class PlayerManager : MonoBehaviour
         _playerMovement.Initialize(stageData);
 
         HidePredictionLine();
+        PlayerManager.Instance.Player.TrailRendererClear();
+
     }
 
     public void DrawPredictionLine(Vector2 startPosition, Vector2 direction)
@@ -73,12 +75,10 @@ public class PlayerManager : MonoBehaviour
         _lineRenderer.positionCount = points.Count;
         _lineRenderer.SetPositions(points.ToArray());
     }
-
     public void HidePredictionLine()
     {
         _lineRenderer.positionCount = 0;
     }
-
     private void ChangeSprite(Enum_PlayerType playerType)
     {
         foreach (PlayerData data in _playerDataList)

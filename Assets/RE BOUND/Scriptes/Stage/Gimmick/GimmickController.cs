@@ -1,8 +1,8 @@
 using UnityEngine;
 
-//[System.Serializable]
 [RequireComponent(typeof(PolygonCollider2D))]
 [RequireComponent(typeof(IGimmick))]
+///各Gimmick専用スクリプト
 public class GimmickController : MonoBehaviour
 {
     private IGimmick _gimmick;

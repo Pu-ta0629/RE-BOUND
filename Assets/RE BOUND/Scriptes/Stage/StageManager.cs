@@ -4,6 +4,7 @@ using UnityEngine;
 public class StageManager : MonoBehaviour
 {
     public static StageManager Instance { get; private set; }
+
     [System.Serializable]
     public class StageInfo
     {
@@ -11,8 +12,18 @@ public class StageManager : MonoBehaviour
         public GameObject StageObj;
     }
 
-    [SerializeField]
-    private List<StageInfo> _stageInfo;
+    // Scene再読込をしなくなったので、ステージの初期配置を覚えておいて入り直すたびに戻す
+    private class TransformSnapshot
+    {
+        public Transform Target;
+        public Vector3 LocalPosition;
+        public Quaternion LocalRotation;
+        public Vector3 LocalScale;
+    }
+
+    [SerializeField] private List<StageInfo> _stageInfo;
+
+    private readonly Dictionary<GameObject, List<TransformSnapshot>> _snapshots = new();
 
     private StageInfo _currentStage;
 
@@ -30,15 +41,20 @@ public class StageManager : MonoBehaviour
             return _currentStage.StageData;
         }
     }
-    public void Initialize(int currentStageID)
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
 
-        LoadStage(currentStageID);
-        Debug.Log(GameManager.Instance.CurrentStageID);
+    // GameController.Initialize から1回だけ
+    public void Initialize()
+    {
+        Instance = this;
+
+        _snapshots.Clear();
+
+        foreach (StageInfo info in _stageInfo)
+        {
+            if (info.StageObj == null) continue;
+
+            _snapshots[info.StageObj] = TakeSnapshot(info.StageObj);
+        }
     }
 
     public void LoadStage(int stageID)
@@ -50,9 +66,15 @@ public class StageManager : MonoBehaviour
             if (info.StageData.StageID != stageID)
                 continue;
 
+            // 先にONにしてから位置を戻す（Animatorの初期ポーズが上書きされないように）
             info.StageObj.SetActive(true);
+            RestoreSnapshot(info.StageObj);
 
             _currentStage = info;
+
+            // 導入アニメ（旧: ステージがONになった瞬間に Animator が流していたもの）
+            Stage stage = info.StageObj.GetComponentInChildren<Stage>();
+            if (stage != null) stage.PlayIntro();
 
             Debug.Log($"Load Stage : {info.StageData.StageName}");
 
@@ -61,6 +83,7 @@ public class StageManager : MonoBehaviour
 
         Debug.LogError($"Stage ID : {stageID} Not Found");
     }
+
     public bool IsExistStage(int stageID)
     {
         foreach (StageInfo info in _stageInfo)
@@ -73,6 +96,7 @@ public class StageManager : MonoBehaviour
 
         return false;
     }
+
     private void DisableAllStage()
     {
         foreach (StageInfo info in _stageInfo)
@@ -83,4 +107,45 @@ public class StageManager : MonoBehaviour
             info.StageObj.SetActive(false);
         }
     }
+
+    #region SNAPSHOT
+
+    private List<TransformSnapshot> TakeSnapshot(GameObject stageObj)
+    {
+        List<TransformSnapshot> list = new();
+
+        foreach (Transform t in stageObj.GetComponentsInChildren<Transform>(true))
+        {
+            list.Add(new TransformSnapshot
+            {
+                Target = t,
+                LocalPosition = t.localPosition,
+                LocalRotation = t.localRotation,
+                LocalScale = t.localScale
+            });
+        }
+
+        return list;
+    }
+
+    private void RestoreSnapshot(GameObject stageObj)
+    {
+        if (!_snapshots.TryGetValue(stageObj, out List<TransformSnapshot> list)) return;
+
+        foreach (TransformSnapshot s in list)
+        {
+            if (s.Target == null) continue;
+
+            s.Target.SetLocalPositionAndRotation(s.LocalPosition, s.LocalRotation);
+            s.Target.localScale = s.LocalScale;
+        }
+
+        foreach (Rigidbody2D rb in stageObj.GetComponentsInChildren<Rigidbody2D>(true))
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+    }
+
+    #endregion
 }
