@@ -1,3 +1,4 @@
+#region PLAYER
 public enum Enum_PlayerType
 {
     Circle,
@@ -12,7 +13,13 @@ public enum Enum_RotationMode
     Constant, 
     MaxClamp
 }
-
+public enum Enum_MovePhysicsMode
+{
+    Constant, 
+    Physics
+}
+#endregion
+#region GOAL 
 public enum Enum_MoveType
 {
     Horizontal,
@@ -25,7 +32,8 @@ public enum Enum_RotateType
     Constant,
     Physics
 }
-
+#endregion 
+#region EFFECT 
 public enum Enum_EffectType
 {
     PlayerIdle,
@@ -36,12 +44,8 @@ public enum Enum_EffectType
     WarpEnter,
     WarpExit
 }
-
-public enum Enum_MovePhysicsMode
-{
-    Constant, 
-    Physics
-}
+#endregion
+#region SE
 public enum Enum_SEType
 {
     PlayerBounce,
@@ -52,13 +56,14 @@ public enum Enum_SEType
     StarUnlock,
     ButtonClick
 }
-
 public enum Enum_SEPlayMode
 {
     Random,      
     All,         
     Sequential   
 }
+#endregion
+
 
 public enum Enum_StarType
 {
