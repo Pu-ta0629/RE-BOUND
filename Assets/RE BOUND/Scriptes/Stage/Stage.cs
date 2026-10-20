@@ -53,10 +53,10 @@ public class Stage : MonoBehaviour
         if (player != null) player.BeginSceneTransition();
     }
 
+    // 導入アニメが終わったら Player を出す（出現アニメ → 操作可能）
     public void EndSceneTransition()
     {
-        PlayerMovement player = GetPlayer();
-        if (player != null) player.EndSceneTransition();
+        if (PlayerManager.Instance != null) PlayerManager.Instance.Appear();
     }
 
     private static PlayerMovement GetPlayer()

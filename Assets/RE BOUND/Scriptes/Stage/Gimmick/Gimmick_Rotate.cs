@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(GimmickController))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class Gimmick_Rotate : MonoBehaviour, IGimmick
 {
     [SerializeField] private Enum_RotateType _rotateType;
@@ -50,11 +51,16 @@ public class Gimmick_Rotate : MonoBehaviour, IGimmick
         _initialRotateSpeed = rotateSpeed;
         _isSpeedCached = true;
 
-        if (_rotateType == Enum_RotateType.Physics && _rb != null)
+        if (_rotateType == Enum_RotateType.Physics)
         {
             _rb.angularVelocity = _rotateSpeed;
             _rb.mass = 0.0001f;
+            _rb.linearDamping = 0;
             _rb.angularDamping = 0;
+            _rb.gravityScale = 0;
+            _rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            _rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
+            _rb.constraints = RigidbodyConstraints2D.FreezePosition;
         }
     }
 

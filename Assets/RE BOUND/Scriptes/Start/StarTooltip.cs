@@ -30,6 +30,8 @@ public class StarTooltip : MonoBehaviour
     // GameManager.Awake から1回だけ呼ばれる
     public void Initialize()
     {
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
         Instance = this;
 
         if (_root == null || _text == null)

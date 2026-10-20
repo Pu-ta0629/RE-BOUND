@@ -18,8 +18,9 @@ public class BoundaryWallController : MonoBehaviour
 
     private void Start()
     {
-        UpdateWalls();
+        if (_mainCamera != null) UpdateWalls();
     }
+
     private void OnValidate()
     {
         if (_mainCamera == null) return;
@@ -27,17 +28,15 @@ public class BoundaryWallController : MonoBehaviour
         UpdateWalls();
     }
 
-
     private void Update()
     {
         if (_mainCamera == null) return;
 
-        bool needUpdate = false;
-        if (!Mathf.Approximately(_lastSize, _mainCamera.orthographicSize)) needUpdate = true;
-        if (!Mathf.Approximately(_lastAspect, _mainCamera.aspect)) needUpdate = true;
-        if (Vector3.SqrMagnitude(_lastCameraPos - _mainCamera.transform.position) > 0.0001f)
+        bool needUpdate = !Mathf.Approximately(_lastSize, _mainCamera.orthographicSize)
+                       || !Mathf.Approximately(_lastAspect, _mainCamera.aspect)
+                       || Vector3.SqrMagnitude(_lastCameraPos - _mainCamera.transform.position) > 0.0001f;
 
-            if (needUpdate) UpdateWalls();
+        if (needUpdate) UpdateWalls();
     }
 
     private void UpdateWalls()
@@ -53,19 +52,16 @@ public class BoundaryWallController : MonoBehaviour
         float halfWidth = width * 0.5f;
         float halfHeight = height * 0.5f;
 
-        // Left
+        //left
         _wallLeft.position = new Vector3(cameraPos.x - halfWidth - _wallThickness * 0.5f, cameraPos.y, 0f);
         _wallLeft.localScale = new Vector3(_wallThickness, height + _wallThickness * 2f, 1f);
-
-        // Right
+        //right
         _wallRight.position = new Vector3(cameraPos.x + halfWidth + _wallThickness * 0.5f, cameraPos.y, 0f);
         _wallRight.localScale = new Vector3(_wallThickness, height + _wallThickness * 2f, 1f);
-
-        // Top
+        //top
         _wallTop.position = new Vector3(cameraPos.x, cameraPos.y + halfHeight + _wallThickness * 0.5f, 0f);
         _wallTop.localScale = new Vector3(width + _wallThickness * 2f, _wallThickness, 1f);
-
-        // Bottom
+        //bottom
         _wallBottom.position = new Vector3(cameraPos.x, cameraPos.y - halfHeight - _wallThickness * 0.5f, 0f);
         _wallBottom.localScale = new Vector3(width + _wallThickness * 2f, _wallThickness, 1f);
     }

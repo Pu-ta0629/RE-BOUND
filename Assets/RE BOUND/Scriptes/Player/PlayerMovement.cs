@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering.Universal;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -9,7 +10,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private PlayerManager _playerManager;
 
     [Header("Drag")]
+    [Header("最小ドラッグ")]
     [SerializeField] private float _minDragDistance = 2f;
+    [Header("最大ドラッグ")]
+    [SerializeField] private float _maxDragDistance = 6f;
+    [SerializeField, Range(0f, 1f)] private float _minSpeedRate = 0.3f;
     [SerializeField] private GameObject _dragStartMarker;
     private GameObject _dragObj;
     private LineRenderer _dragLine;
@@ -30,7 +35,8 @@ public class PlayerMovement : MonoBehaviour
     private int _bounceCount;
     private int _swipeCount;
 
-    private float _moveSpeed;
+    private float _moveSpeed;  
+    private float _launchSpeed;
     private float _currentSpeed;
     private float _rotateSpeed;
 
@@ -64,6 +70,7 @@ public class PlayerMovement : MonoBehaviour
 
 
         _currentSpeed = 0f;
+        _launchSpeed = _moveSpeed;
 
         _isDragging = false;
         _isLaunched = false;
@@ -74,7 +81,7 @@ public class PlayerMovement : MonoBehaviour
         //_rb.angularVelocity = _rotationMode == Enum_RotationMode.Constant ? _rotateSpeed : 0f;
 
         gameObject.SetActive(false);
-        transform.SetPositionAndRotation(stageData.StartPos,Quaternion.identity);
+        transform.SetPositionAndRotation(stageData.StartPos, Quaternion.identity);
         gameObject.SetActive(true);
         _playerIdleObj.SetActive(true);
 
@@ -94,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
             _dragObj.SetActive(false);
         }
         _dragLine.positionCount = 0;
-        if(_dragLine.useWorldSpace == false)
+        if (_dragLine.useWorldSpace == false)
             _dragLine.useWorldSpace = true;
     }
 
@@ -171,28 +178,30 @@ public class PlayerMovement : MonoBehaviour
             return;
 
         //start drag
-        if (mouse.leftButton.wasPressedThisFrame)
+        if (mouse.leftButton.wasPressedThisFrame && !IsPointerOverButton())
         {
             _dragStart = GetMouseWorldPosition();
             _isDragging = true;
-            
+
             _dragObj.transform.position = _dragStart;
             _dragObj.SetActive(true);
 
             _dragLine.positionCount = 2;
-            
+
         }
 
+        // drqagging
         if (_isDragging)
         {
             Vector2 mousePos = GetMouseWorldPosition();
 
             //DragMarker
-            Vector2 dir = (mousePos - _dragStart).normalized;
-            float distance = (mousePos - _dragStart).magnitude;
-            float radius = _dragObj.transform.localScale.x * 0.5f;
+            Vector2 dir = (mousePos - _dragStart).normalized;  //値の正規化
+            float distance = (mousePos - _dragStart).magnitude;//斜辺(マウスの現在地-ドラッグ開始地点)
+            float radius = _dragObj.transform.localScale.x * 0.5f;//ドラッグ無効範囲
             Vector2 lineStart = _dragStart + dir * radius;
             _dragLine.SetPosition(0, lineStart);
+            //draw line
             if (distance <= radius)
             {
                 _dragLine.SetPosition(1, lineStart);
@@ -205,7 +214,7 @@ public class PlayerMovement : MonoBehaviour
             Vector2 direction = _dragStart - mousePos;
             if (IsValidDrag(direction))
             {
-                _playerManager.DrawPredictionLine(transform.position, direction);
+                _playerManager.DrawPredictionLine(transform.position, direction, GetDragRate(direction));
             }
             else
             {
@@ -249,6 +258,35 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private readonly List<RaycastResult> _uiHits = new();
+
+    // ボタンなど「押せるUI」の上だけドラッグを始めない（背景の Image などは無視する）
+    private bool IsPointerOverButton()
+    {
+        if (EventSystem.current == null) return false;
+
+        //EventSyste(UI)上のMosuePosの取得
+        PointerEventData pointer = new(EventSystem.current)
+        {
+            position = Mouse.current.position.ReadValue()
+        };
+
+        //初期化
+        _uiHits.Clear();
+        EventSystem.current.RaycastAll(pointer, _uiHits);
+
+        //ヒット結果の確認
+        foreach (RaycastResult hit in _uiHits)
+        {
+            //もしヒット結果がSelectableUIなら return true
+            if (hit.gameObject.GetComponentInParent<UnityEngine.UI.Selectable>() != null) return true;
+            //UnityEngine.UI.Selectable = Button, Slider, Toggle, Scroolbarの基底クラス
+        }
+
+        return false;
+    }
+
+    //Current MousePosition
     private Vector2 GetMouseWorldPosition()
     {
         return GameManager.Instance.MainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
@@ -265,13 +303,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void Launch()
     {
+        //確定ドラッグ距離
         Vector2 direction = _dragStart - _dragEnd;
 
-        if (!IsValidDrag(direction))
-            return;
+        if (!IsValidDrag(direction)) return;
 
-        _currentSpeed = _moveSpeed;
-        _rb.linearVelocity = direction.normalized * _moveSpeed;
+        // 引っ張った距離が長いほど速い
+        float rate = GetDragRate(direction);
+        _launchSpeed = _moveSpeed * Mathf.Lerp(_minSpeedRate, 1f, rate);
+
+        _currentSpeed = _launchSpeed;
+        _rb.linearVelocity = direction.normalized * _launchSpeed;
 
         if (_rotationMode == Enum_RotationMode.Constant)
         {
@@ -282,8 +324,14 @@ public class PlayerMovement : MonoBehaviour
         _isLaunched = true;
     }
 
+    // ドラッグの強さ（最小距離 = 0、最大距離以上 = 1）
+    private float GetDragRate(Vector2 direction)
+    {                                                                //斜辺                   
+        return Mathf.InverseLerp(_minDragDistance, _maxDragDistance, direction.magnitude);
+    }
+
     private bool IsValidDrag(Vector2 direction)
-    {
+    {                    //sqr = 2^
         return direction.sqrMagnitude >= _minDragDistance * _minDragDistance;
     }
 
@@ -291,23 +339,19 @@ public class PlayerMovement : MonoBehaviour
     {
         switch (_movePhysicsMode)
         {
-            case Enum_MovePhysicsMode.Constant:
-                MaintainSpeed();
-                break;
+            case Enum_MovePhysicsMode.Constant: MaintainSpeed(); break;
 
-            case Enum_MovePhysicsMode.Physics:
-                MonsterMove();
-                break;
+            case Enum_MovePhysicsMode.Physics: PhysicalMove(); break;
         }
     }
 
     private void MaintainSpeed()
     {
         if (_rb.linearVelocity.sqrMagnitude <= 0.0001f) return;
-        _rb.linearVelocity = _rb.linearVelocity.normalized * _moveSpeed;
+        _rb.linearVelocity = _rb.linearVelocity.normalized * _launchSpeed;
     }
 
-    private void MonsterMove()
+    private void PhysicalMove()
     {
         _currentSpeed *= Mathf.Pow(_deceleration, Time.fixedDeltaTime * 60f);
 
@@ -338,16 +382,11 @@ public class PlayerMovement : MonoBehaviour
     {
         switch (_rotationMode)
         {
-            case Enum_RotationMode.Normal:
-                break;
+            case Enum_RotationMode.Normal: break;
 
-            case Enum_RotationMode.Constant:
-                _rb.angularVelocity = _rotateSpeed;
-                break;
+            case Enum_RotationMode.Constant: _rb.angularVelocity = _rotateSpeed; break;
 
-            case Enum_RotationMode.MaxClamp:
-                _rb.angularVelocity = Mathf.Clamp(_rb.angularVelocity, -_rotateSpeed, _rotateSpeed);
-                break;
+            case Enum_RotationMode.MaxClamp: _rb.angularVelocity = Mathf.Clamp(_rb.angularVelocity, -_rotateSpeed, _rotateSpeed); break;
         }
     }
     public void BeginResult()

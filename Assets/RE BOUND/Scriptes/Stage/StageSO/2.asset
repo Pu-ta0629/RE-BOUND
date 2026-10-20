@@ -16,8 +16,8 @@ MonoBehaviour:
   StageID: 2
   StartPos: {x: 10, y: 0}
   GoalPos: {x: -10, y: 0}
-  SwipeLimit: 10
-  BounceLimit: 10
+  SwipeLimit: 1
+  BounceLimit: 3
   PlayerType: 1
   MoveSpeed: 25
   RotationMode: 0

@@ -100,16 +100,14 @@ public class AudioManager : MonoBehaviour
         if (OutputVolume <= 0f) return;
 
         // クールダウン（連続再生の防止）
-        float now = Time.unscaledTime;
+        //float now = Time.unscaledTime;
 
-        if (data.Cooldown > 0f
-            && _lastPlayTime.TryGetValue(data.SEType, out float lastTime)
-            && now - lastTime < data.Cooldown)
-        {
-            return;
-        }
+        //if (data.Cooldown > 0f&& _lastPlayTime.TryGetValue(data.SEType, out float lastTime) && now - lastTime < data.Cooldown)
+        //{
+        //    return;
+        //}
 
-        _lastPlayTime[data.SEType] = now;
+        //_lastPlayTime[data.SEType] = now;
 
         switch (data.PlayMode)
         {

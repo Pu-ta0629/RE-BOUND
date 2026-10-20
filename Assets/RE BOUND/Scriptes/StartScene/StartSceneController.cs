@@ -10,17 +10,23 @@ public class StartSceneController : MonoBehaviour
     [SerializeField] private Button _quitButton;
 
     [Header("Animation (Animatorは使わず、コードで再生)")]
+    [Tooltip("クリップのパスの基準（元の Animator が付いていた TitleRoot）。空ならこのオブジェクト")]
     [SerializeField] private GameObject _animationTarget;
 
-    [Tooltip("Do not play if the AnimationClip is null")]
+    [Tooltip("入場アニメ（旧 StartScene のクリップ）。空なら再生しない")]
     [SerializeField] private AnimationClip _introClip;
-    [SerializeField] private AnimationClip _gameClip;           
-    [SerializeField] private AnimationClip _stageSelectClip;    
-    [SerializeField] private AnimationClip _quitClip;           
+    [SerializeField] private AnimationClip _gameClip;        
+    [SerializeField] private AnimationClip _stageSelectClip; 
+    [SerializeField] private AnimationClip _quitClip;        
+
+    [Tooltip("残っている旧 Animator（あれば自動で無効にする。競合を防ぐ）")]
+    [SerializeField] private Animator _legacyAnimator;
 
     private bool _isRegistered;
     private bool _isBusy;
     private Coroutine _routine;
+
+    public bool IsBusy => _isBusy;
 
     private GameObject Target => _animationTarget != null ? _animationTarget : gameObject;
 
@@ -28,6 +34,8 @@ public class StartSceneController : MonoBehaviour
     public void Begin()
     {
         RegisterOnce();
+
+        if (_legacyAnimator != null) _legacyAnimator.enabled = false;
 
         if (_routine != null) StopCoroutine(_routine);
 
@@ -38,6 +46,12 @@ public class StartSceneController : MonoBehaviour
     {
         if (_isRegistered) return;
         _isRegistered = true;
+
+        ButtonSE se = GameManager.Instance.ButtonSE;
+
+        _gameButton.onClick.AddListener(se.ButtonClick);
+        _stageSelectButton.onClick.AddListener(se.ButtonClick);
+        _quitButton.onClick.AddListener(se.ButtonClick);
 
         _gameButton.onClick.AddListener(() => Play(_gameClip, LoadInGame));
         _stageSelectButton.onClick.AddListener(() => Play(_stageSelectClip, LoadStageSelect));
@@ -71,10 +85,9 @@ public class StartSceneController : MonoBehaviour
         yield return ClipPlayer.Play(Target, clip);
 
         _routine = null;
-        onFinished?.Invoke();   // 画面を切り替えても _isBusy は Begin() で戻る
+        onFinished?.Invoke();   
     }
 
-    // 外部/AnimationEventからも呼べるように名前は残す
     public void LoadInGame() => GameManager.Instance.GoInGame();
     public void LoadStageSelect() => GameManager.Instance.GoStageSelect();
     public void LoadQuit() => GameManager.Instance.Quit();

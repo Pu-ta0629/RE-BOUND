@@ -41,7 +41,10 @@ public class GameController : MonoBehaviour
         LoadStage(stageID);
 
         _playerManager.Initialize(_stageManager.CurrentStageData);
+
+        _playerManager.Hide();
     }
+
     public void EndGame()
     {
         _retryManager.ResetState();
@@ -49,9 +52,9 @@ public class GameController : MonoBehaviour
 
         GameSettingsManager.Instance.SetPause(false);
 
-        NULLCHECK();
-        StarTooltip.Instance.Hide();
+        if (StarTooltip.Instance != null) StarTooltip.Instance.Hide();
     }
+
     public void LoadStage(int stageID)
     {
         _stageManager.LoadStage(stageID);

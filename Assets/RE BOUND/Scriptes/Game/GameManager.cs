@@ -18,9 +18,11 @@ public class GameManager : MonoBehaviour
 
     [Header("Ref")]
     [SerializeField] private AudioManager _audioManager;
+    [SerializeField] private ButtonSE _buttonSE;
     [SerializeField] private EffectManager _effectManager;
     [SerializeField] private GameController _gameController;
     [SerializeField] private GameSettingsManager _gameSettingsManager;
+    [SerializeField] private InputManager _inputManager;
     [SerializeField] private MenuUI _menuUI;
     [SerializeField] private StageDatabase _stageDatabase;
     [SerializeField] private StarTooltip _starTooltip;
@@ -28,11 +30,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private SaveManager _saveManager;
 
     public SaveManager SaveManager => _saveManager;
+    public ButtonSE ButtonSE => _buttonSE;
     public StageData GetStageData(int stageID) => _stageDatabase != null ? _stageDatabase.Get(stageID) : null;
 
-    // —Bˆê‚ÌAwake
     private void Awake()
     {
+        //Generate instance
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -41,7 +44,7 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
 
-        if (!NULLCHECK()) return; //not true
+        if (!NULLCHECK()) return;
 
         Initialize();
 
@@ -71,6 +74,9 @@ public class GameManager : MonoBehaviour
         //State‚É‰ž‚¶‚ÄMenu‚ð•Ï‰»‚³‚¹‚é‚½‚ßState‚ÌŒã
         _menuUI.Initialize();
 
+        //‘SState‹¤’Ê‚Ì“ü—Í
+        _inputManager.Initialize();
+
         //‚±‚±‚Å‰æ–Ê•\Ž¦
         _stateManager.Begin();
     }
@@ -83,6 +89,8 @@ public class GameManager : MonoBehaviour
         ok &= CHECK(_gameSettingsManager, nameof(_gameSettingsManager));
         ok &= CHECK(_effectManager, nameof(_effectManager));
         ok &= CHECK(_audioManager, nameof(_audioManager));
+        ok &= CHECK(_buttonSE, nameof(_buttonSE));
+        ok &= CHECK(_inputManager, nameof(_inputManager));
         ok &= CHECK(_gameController, nameof(_gameController));
         ok &= CHECK(_starTooltip, nameof(_starTooltip));
         ok &= CHECK(_stateManager, nameof(_stateManager));
@@ -156,7 +164,6 @@ public class GameManager : MonoBehaviour
     #region QUIT
     public void Quit()
     {
-        Debug.Log("END GAME");
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

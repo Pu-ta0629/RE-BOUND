@@ -1,6 +1,6 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class MenuUI : MonoBehaviour
@@ -21,6 +21,20 @@ public class MenuUI : MonoBehaviour
     [SerializeField] private Button _stageSelectButton;
     [SerializeField] private Button _titleButton_InGame;
     [SerializeField] private Button _titleButton_StageSelect;
+    [SerializeField] private Button _closeButton_Menu;
+
+    [Header("Transition (遷移アニメ。Animatorは使わず、コードで再生)")]
+    [Tooltip("InGame 側のクリップのパスの基準（元の Animator が付いていた InGameUIRoot など）")]
+    [SerializeField] private GameObject _inGameTarget;
+    [Tooltip("StageSelect 側のクリップのパスの基準（StageSelectRoot）")]
+    [SerializeField] private GameObject _stageSelectTarget;
+
+    [Tooltip("InGame の Button_StageSelect を押したとき。空ならアニメなしで遷移")]
+    [SerializeField] private AnimationClip _inGameToStageSelectClip;
+    [Tooltip("InGame の Button_Title を押したとき")]
+    [SerializeField] private AnimationClip _inGameToTitleClip;
+    [Tooltip("StageSelect の Button_Title を押したとき")]
+    [SerializeField] private AnimationClip _stageSelectToTitleClip;
 
     [Header("Stage")]
     [SerializeField] private TMP_Text _currentStageText;
@@ -35,25 +49,12 @@ public class MenuUI : MonoBehaviour
 
     private bool _isVisible;
     private StateManager _subscribed;
+    private bool _isBusy;
+    private readonly ViewSnapshot _menuSnapshot = new();
     public bool IsVisible => _isVisible;
+    public bool IsBusy => _isBusy;
 
     #region UNITY EVENT
-
-    private void Update()
-    {
-        Keyboard keyboard = Keyboard.current;
-        if (keyboard == null) return;
-
-        if (keyboard.escapeKey.wasPressedThisFrame)
-        {
-            ToggleMenu();
-        }
-
-        if (keyboard.fKey.wasPressedThisFrame)
-        {
-            Debug.Log($"FPS : {(int)GameSettingsManager.Instance.CurrentFPS}");
-        }
-    }
 
     private void OnDestroy()
     {
@@ -69,6 +70,10 @@ public class MenuUI : MonoBehaviour
     public void Initialize()
     {
         Request();
+
+        // 遷移アニメで動かした見た目を、閉じるたびに元に戻すため（ON/OFFは State が管理するので戻さない）
+        _menuSnapshot.Clear();
+        _menuSnapshot.Add(_menuRoot.transform, false);
 
         RegisterButtons();
         RegisterSettings();
@@ -106,13 +111,24 @@ public class MenuUI : MonoBehaviour
     private void RegisterButtons()
     {
         _tutorialButton.onClick.RemoveAllListeners();
+        _tutorialButton.onClick.AddListener(GameManager.Instance.ButtonSE.ButtonClick);
         _tutorialButton.onClick.AddListener(ToggleTutorial);
+
         _stageSelectButton.onClick.RemoveAllListeners();
-        _stageSelectButton.onClick.AddListener(OpenStageSelect);
+        _stageSelectButton.onClick.AddListener(GameManager.Instance.ButtonSE.ButtonClick);
+        _stageSelectButton.onClick.AddListener(() => Transition(_inGameTarget, _inGameToStageSelectClip, GameManager.Instance.GoStageSelect));
+
         _titleButton_InGame.onClick.RemoveAllListeners();
-        _titleButton_InGame.onClick.AddListener(OpenTitle);
+        _titleButton_InGame.onClick.AddListener(GameManager.Instance.ButtonSE.ButtonClick);
+        _titleButton_InGame.onClick.AddListener(() => Transition(_inGameTarget, _inGameToTitleClip, GameManager.Instance.GoTitle));
+
         _titleButton_StageSelect.onClick.RemoveAllListeners();
-        _titleButton_StageSelect.onClick.AddListener(OpenTitle);
+        _titleButton_StageSelect.onClick.AddListener(GameManager.Instance.ButtonSE.ButtonClick);
+        _titleButton_StageSelect.onClick.AddListener(() => Transition(_stageSelectTarget, _stageSelectToTitleClip, GameManager.Instance.GoTitle));
+
+        _closeButton_Menu.onClick.RemoveAllListeners();
+        _closeButton_Menu.onClick.AddListener(GameManager.Instance.ButtonSE.ButtonClick);
+        _closeButton_Menu.onClick.AddListener(ToggleMenu);
     }
 
     private void RegisterSettings()
@@ -192,10 +208,14 @@ public class MenuUI : MonoBehaviour
     #region MENU
     public void ToggleMenu()
     {
+        if (_isBusy) return;
+
         if (_isVisible) Hide();
         else Show();
 
-        GameSettingsManager.Instance.TogglePause();
+        // 止めるのは InGame だけ。Title / StageSelect はメニューを開いても時間は進める
+        bool inGame = StateManager.Instance.CurrentState == Enum_GameState.InGame;
+        GameSettingsManager.Instance.SetPause(_isVisible && inGame);
     }
 
     public void Show()
@@ -209,6 +229,7 @@ public class MenuUI : MonoBehaviour
     {
         _isVisible = false;
         _menuRoot.SetActive(false);
+        _menuSnapshot.Restore();
 
         if (StarTooltip.Instance != null)
             StarTooltip.Instance.Hide();
@@ -221,26 +242,32 @@ public class MenuUI : MonoBehaviour
         _tutorialPanel.SetActive(!_tutorialPanel.activeSelf);
     }
 
-    private void OpenStageSelect()
+    // 遷移アニメを再生してから State を切り替える
+    private void Transition(GameObject target, AnimationClip clip, System.Action go)
     {
-        Hide();
+        if (_isBusy) return;
 
-        GameSettingsManager.Instance.SetPause(false);
-        GameManager.Instance.GoStageSelect();
+        _isBusy = true;
+
+        // メニューは開いたまま、メニューのボタンなどのアニメを見せる（閉じるのは State が切り替わるとき）
+        // MenuUI が非表示になっても止まらないように GameManager で動かす
+        GameManager.Instance.StartCoroutine(TransitionRoutine(target, clip, go));
     }
 
-    private void OpenTitle()
+    private IEnumerator TransitionRoutine(GameObject target, AnimationClip clip, System.Action go)
     {
-        Hide();
+        // ポーズ中でも進む（unscaled）。ポーズは State が切り替わるときに解除される
+        yield return ClipPlayer.Play(target, clip);
 
-        GameSettingsManager.Instance.SetPause(false);
-        GameManager.Instance.GoTitle();
+        go();
     }
     #endregion
 
     #region STATE
     private void OnStateChanged(Enum_GameState state)
     {
+        _isBusy = false;
+
         UpdateStateUI(state);
         UpdateStageText();
 

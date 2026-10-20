@@ -17,6 +17,8 @@ public class StageSelectManager : MonoBehaviour
         [Tooltip("このステージを押したときに再生するアニメ（任意）。空なら Default Select Clip")]
         public AnimationClip SelectClip;
 
+        [Tooltip("SelectClip のパスの基準。空ならボタン自身")]
+        public GameObject SelectTarget;
     }
 
     [SerializeField] private List<StageButton> _stageButtons;
@@ -24,7 +26,7 @@ public class StageSelectManager : MonoBehaviour
 
     [Header("Animation (Animatorは使わず、コードで再生)")]
     [Tooltip("入場アニメのパスの基準（元の Animator が付いていた StageSelectRoot など）。空ならこのオブジェクト")]
-    [SerializeField] private GameObject _animationTarget;
+    [SerializeField] private GameObject _introTarget;
     [SerializeField] private AnimationClip _introClip;
 
     [Tooltip("個別の Select Clip が無いボタンで再生するアニメ（任意）")]
@@ -38,7 +40,9 @@ public class StageSelectManager : MonoBehaviour
     private bool _isBusy;
     private Coroutine _routine;
 
-    private GameObject IntroTarget => _animationTarget != null ? _animationTarget : gameObject;
+    public bool IsBusy => _isBusy;
+
+    private GameObject IntroTarget => _introTarget != null ? _introTarget : gameObject;
 
     // StageSelectState に入るたびに呼ばれる（位置/Scaleの復元は GameStateBase.Enter が済ませている）
     public void Begin()
@@ -64,11 +68,9 @@ public class StageSelectManager : MonoBehaviour
             StageButton captured = stage;
 
             stage.Button.onClick.RemoveAllListeners();
+            stage.Button.onClick.AddListener(_buttonSE.ButtonClick);
             stage.Button.onClick.AddListener(() => OnStageClicked(captured));
-            stage.Button.onClick.AddListener(() => _buttonSE.ButtonClick());
         }
-
-        if (_introClip != null) ClipPlayer.Validate(IntroTarget, _introClip, "StageSelect Intro");
 
         if (_routine != null) StopCoroutine(_routine);
 
@@ -93,14 +95,15 @@ public class StageSelectManager : MonoBehaviour
 
         if (clip == null)
         {
-            Debug.Log($"[StageSelect] Stage{stage.StageData.StageID} : Select Clip / Default Select Clip が未設定のため、アニメなしで進みます");
             SelectStage(stage.StageData.StageID);
             return;
         }
 
         if (_routine != null) StopCoroutine(_routine);
 
-        _routine = StartCoroutine(SelectRoutine(IntroTarget, clip, stage.StageData.StageID));
+        GameObject target = stage.SelectTarget != null ? stage.SelectTarget : IntroTarget;
+
+        _routine = StartCoroutine(SelectRoutine(target, clip, stage.StageData.StageID));
     }
 
     // 押したアニメを再生して、終わったら InGame へ（旧: AnimationEvent から SelectStage を呼んでいた）
@@ -114,7 +117,6 @@ public class StageSelectManager : MonoBehaviour
         SelectStage(stageID);   // 画面が切り替わっても _isBusy は Begin() で戻る
     }
 
-    // 外部/AnimationEvent からも呼べるように名前と引数は変えない
     public void SelectStage(int stageID)
     {
         GameManager.Instance.SetCurrentStage(stageID);
