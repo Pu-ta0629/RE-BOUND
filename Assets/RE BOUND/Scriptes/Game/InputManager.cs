@@ -1,10 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// 全State共通の入力受付。どのStateの子にも置かず、常に有効なオブジェクトに付ける。
-/// Awake / Start は持たず、GameManager から Initialize() で初期化される。
-/// </summary>
 public class InputManager : MonoBehaviour
 {
     [SerializeField] private GimmickManager _gimmickManager;
