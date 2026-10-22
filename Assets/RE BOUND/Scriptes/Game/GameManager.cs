@@ -33,9 +33,9 @@ public class GameManager : MonoBehaviour
     public ButtonSE ButtonSE => _buttonSE;
     public StageData GetStageData(int stageID) => _stageDatabase != null ? _stageDatabase.Get(stageID) : null;
 
+    // 唯一のAwake
     private void Awake()
     {
-        //Generate instance
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
 
-        if (!NULLCHECK()) return;
+        if (!NULLCHECK()) return; //not true
 
         Initialize();
 
@@ -135,6 +135,9 @@ public class GameManager : MonoBehaviour
     public void GoStageSelect() => StateManager.Instance.ChangeState(Enum_GameState.StageSelect);
 
     public void GoInGame() => StateManager.Instance.ChangeState(Enum_GameState.InGame);
+
+    // 今のステージを最初から読み込み直す（InGame に入り直す）
+    public void ReloadStage() => StateManager.Instance.ChangeState(Enum_GameState.InGame, true);
 
     #endregion
 

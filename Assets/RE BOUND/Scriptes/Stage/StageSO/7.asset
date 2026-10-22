@@ -17,9 +17,9 @@ MonoBehaviour:
   StartPos: {x: -12, y: 6}
   GoalPos: {x: 12, y: 6}
   SwipeLimit: 3
-  BounceLimit: 10
+  BounceLimit: 5
   PlayerType: 2
-  MoveSpeed: 25
+  MoveSpeed: 35
   RotationMode: 0
   RotateSpeed: 360
   GoalMoveType: 0

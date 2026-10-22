@@ -1094,7 +1094,7 @@ Transform:
   m_GameObject: {fileID: 1631851163046626351}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -14.705882, y: 0, z: 10}
+  m_LocalPosition: {x: -14.742152, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 18, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2509,7 +2509,7 @@ Transform:
   m_GameObject: {fileID: 3675921403415344077}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 14.705882, y: 0, z: 10}
+  m_LocalPosition: {x: 14.742152, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 18, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2676,7 +2676,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -8.5, z: 10}
-  m_LocalScale: {x: 30.411764, y: 1, z: 1}
+  m_LocalScale: {x: 30.484304, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1285023326167987639}
@@ -3068,7 +3068,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 8.5, z: 10}
-  m_LocalScale: {x: 30.411764, y: 1, z: 1}
+  m_LocalScale: {x: 30.484304, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1285023326167987639}
@@ -4500,9 +4500,11 @@ MonoBehaviour:
   _maxUnlockStage: 0
   _mainCamera: {fileID: 8442819345175698157}
   _audioManager: {fileID: 5408063880164498014}
+  _buttonSE: {fileID: 0}
   _effectManager: {fileID: 8236230171735772311}
   _gameController: {fileID: 0}
   _gameSettingsManager: {fileID: 8079567790152380647}
+  _inputManager: {fileID: 0}
   _menuUI: {fileID: 8342247551779875181}
   _stageDatabase: {fileID: 11400000, guid: c687be5602e6eba4a9f520def852a952, type: 2}
   _starTooltip: {fileID: 1995539321981680941}
@@ -4541,6 +4543,12 @@ MonoBehaviour:
   _stageSelectButton: {fileID: 978133123415221129}
   _titleButton_InGame: {fileID: 7038480718412879510}
   _titleButton_StageSelect: {fileID: 1526969268512890337}
+  _closeButton_Menu: {fileID: 0}
+  _inGameTarget: {fileID: 0}
+  _stageSelectTarget: {fileID: 0}
+  _inGameToStageSelectClip: {fileID: 0}
+  _inGameToTitleClip: {fileID: 0}
+  _stageSelectToTitleClip: {fileID: 0}
   _currentStageText: {fileID: 7839708521335140198}
   _currentStageStars: {fileID: 8211526940305091805}
   _seToggle: {fileID: 7401034637949741642}

@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class MenuUI : MonoBehaviour
@@ -17,11 +18,14 @@ public class MenuUI : MonoBehaviour
     [SerializeField] private GameObject _tutorialPanel;
 
     [Header("Button")]
-    [SerializeField] private Button _tutorialButton;
     [SerializeField] private Button _stageSelectButton;
     [SerializeField] private Button _titleButton_InGame;
     [SerializeField] private Button _titleButton_StageSelect;
     [SerializeField] private Button _closeButton_Menu;
+    [SerializeField] private Button _retryButton_InGame;
+
+    [SerializeField] private GameObject _helpMark;
+    [SerializeField] private GameObject _helpPanel;
 
     [Header("Transition (遷移アニメ。Animatorは使わず、コードで再生)")]
     [Tooltip("InGame 側のクリップのパスの基準（元の Animator が付いていた InGameUIRoot など）")]
@@ -77,6 +81,7 @@ public class MenuUI : MonoBehaviour
 
         RegisterButtons();
         RegisterSettings();
+        RegisterHelp();
 
         if (_tutorialPanel != null) _tutorialPanel.SetActive(false);
 
@@ -110,10 +115,6 @@ public class MenuUI : MonoBehaviour
 
     private void RegisterButtons()
     {
-        _tutorialButton.onClick.RemoveAllListeners();
-        _tutorialButton.onClick.AddListener(GameManager.Instance.ButtonSE.ButtonClick);
-        _tutorialButton.onClick.AddListener(ToggleTutorial);
-
         _stageSelectButton.onClick.RemoveAllListeners();
         _stageSelectButton.onClick.AddListener(GameManager.Instance.ButtonSE.ButtonClick);
         _stageSelectButton.onClick.AddListener(() => Transition(_inGameTarget, _inGameToStageSelectClip, GameManager.Instance.GoStageSelect));
@@ -126,9 +127,39 @@ public class MenuUI : MonoBehaviour
         _titleButton_StageSelect.onClick.AddListener(GameManager.Instance.ButtonSE.ButtonClick);
         _titleButton_StageSelect.onClick.AddListener(() => Transition(_stageSelectTarget, _stageSelectToTitleClip, GameManager.Instance.GoTitle));
 
+        _retryButton_InGame.onClick.RemoveAllListeners();
+        _retryButton_InGame.onClick.AddListener(GameManager.Instance.ButtonSE.ButtonClick);
+        _retryButton_InGame.onClick.AddListener(RetryStage);
+
         _closeButton_Menu.onClick.RemoveAllListeners();
         _closeButton_Menu.onClick.AddListener(GameManager.Instance.ButtonSE.ButtonClick);
         _closeButton_Menu.onClick.AddListener(ToggleMenu);
+    }
+
+    // ？を押している間だけ表示。離す / ポインターが外れる / メニューを閉じると消える
+    private void RegisterHelp()
+    {
+        if (_helpPanel != null) _helpPanel.SetActive(false);
+
+        if (_helpMark == null || _helpPanel == null)
+        {
+            LogMissing(_helpMark == null ? nameof(_helpMark) : nameof(_helpPanel));
+            return;
+        }
+
+        if (!_helpMark.TryGetComponent(out EventTrigger trigger)) trigger = _helpMark.AddComponent<EventTrigger>();
+
+        trigger.triggers.Clear();
+        AddTrigger(trigger, EventTriggerType.PointerDown, () => _helpPanel.SetActive(true));
+        AddTrigger(trigger, EventTriggerType.PointerUp, () => _helpPanel.SetActive(false));
+        AddTrigger(trigger, EventTriggerType.PointerExit, () => _helpPanel.SetActive(false));
+    }
+
+    private void AddTrigger(EventTrigger trigger, EventTriggerType type, UnityEngine.Events.UnityAction action)
+    {
+        EventTrigger.Entry entry = new() { eventID = type };
+        entry.callback.AddListener(_ => action());
+        trigger.triggers.Add(entry);
     }
 
     private void RegisterSettings()
@@ -231,6 +262,8 @@ public class MenuUI : MonoBehaviour
         _menuRoot.SetActive(false);
         _menuSnapshot.Restore();
 
+        if (_helpPanel != null) _helpPanel.SetActive(false);
+
         if (StarTooltip.Instance != null)
             StarTooltip.Instance.Hide();
     }
@@ -240,6 +273,11 @@ public class MenuUI : MonoBehaviour
     private void ToggleTutorial()
     {
         _tutorialPanel.SetActive(!_tutorialPanel.activeSelf);
+    }
+    private void RetryStage()
+    {
+        AudioManager.Instance.Play(Enum_SEType.Retry);
+        GameManager.Instance.ReloadStage();
     }
 
     // 遷移アニメを再生してから State を切り替える

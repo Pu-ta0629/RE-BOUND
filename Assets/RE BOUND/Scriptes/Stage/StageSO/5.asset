@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageData
   StageName: 5
   StageID: 5
-  StartPos: {x: -12, y: 0}
-  GoalPos: {x: 12, y: 0}
+  StartPos: {x: -15, y: 0}
+  GoalPos: {x: 16, y: 0}
   SwipeLimit: 1
-  BounceLimit: 10
+  BounceLimit: 6
   PlayerType: 0
-  MoveSpeed: 25
+  MoveSpeed: 35
   RotationMode: 0
   RotateSpeed: 360
   GoalMoveType: 0

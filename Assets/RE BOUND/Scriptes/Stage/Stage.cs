@@ -17,6 +17,12 @@ public class Stage : MonoBehaviour
 
     private Coroutine _routine;
 
+    // 導入アニメ中は、アニメが位置などを動かしている。ギミックは終わるまで待つ（Gimmick_Move など）
+    public static bool IsIntroPlaying { get; private set; }
+
+    // 導入アニメが始まるたびに増える。「このステージを開き直したか」の判定に使う
+    public static int IntroId { get; private set; }
+
     // StageManager.LoadStage から、ステージを開くたびに呼ばれる
     public void PlayIntro()
     {
@@ -25,6 +31,9 @@ public class Stage : MonoBehaviour
         if (!isActiveAndEnabled) return;
 
         if (_routine != null) StopCoroutine(_routine);
+
+        IntroId++;
+        IsIntroPlaying = true;
 
         _routine = StartCoroutine(IntroRoutine());
     }
@@ -42,8 +51,20 @@ public class Stage : MonoBehaviour
             yield return null;
         }
 
+        IsIntroPlaying = false;
+
         EndSceneTransition();
         _routine = null;
+    }
+
+    // 導入アニメの途中でステージが閉じられても、待ちっぱなしにならないように
+    private void OnDisable()
+    {
+        if (_routine != null)
+        {
+            _routine = null;
+            IsIntroPlaying = false;
+        }
     }
 
     // AnimationEvent から呼ばれる。名前は変えない

@@ -19,7 +19,7 @@ MonoBehaviour:
   SwipeLimit: 10
   BounceLimit: 10
   PlayerType: 0
-  MoveSpeed: 25
+  MoveSpeed: 100
   RotationMode: 0
   RotateSpeed: 360
   GoalMoveType: 0
