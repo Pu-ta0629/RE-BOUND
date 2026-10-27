@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4277341386046626710}
   - component: {fileID: 6712174340164576660}
   - component: {fileID: 3011979184852161925}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Gimmick_Retry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 542350423741083067}
   - component: {fileID: 810707875386770774}
   - component: {fileID: 4664369947198354712}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -29,6 +29,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private StateManager _stateManager;
     [SerializeField] private SaveManager _saveManager;
 
+    [Tooltip("ステージの読み込み直し(Retry)を、次に受けるまでの秒数")]
+    [SerializeField] private float _reloadCooltime = 1.5f;
+    private float _nextReloadTime;
+
     public SaveManager SaveManager => _saveManager;
     public ButtonSE ButtonSE => _buttonSE;
     public StageData GetStageData(int stageID) => _stageDatabase != null ? _stageDatabase.Get(stageID) : null;
@@ -137,7 +141,13 @@ public class GameManager : MonoBehaviour
     public void GoInGame() => StateManager.Instance.ChangeState(Enum_GameState.InGame);
 
     // 今のステージを最初から読み込み直す（InGame に入り直す）
-    public void ReloadStage() => StateManager.Instance.ChangeState(Enum_GameState.InGame, true);
+    public void ReloadStage()
+    {
+        if (Time.unscaledTime < _nextReloadTime) return;
+        _nextReloadTime = Time.unscaledTime + _reloadCooltime;
+        AudioManager.Instance.Play(Enum_SEType.Retry);
+        StateManager.Instance.ChangeState(Enum_GameState.InGame, true); 
+    }
 
     #endregion
 

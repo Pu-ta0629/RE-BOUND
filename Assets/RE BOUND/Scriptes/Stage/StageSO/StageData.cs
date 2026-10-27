@@ -31,8 +31,14 @@ public class StageData : ScriptableObject
     [Header("Move")]
     public Enum_MoveType GoalMoveType;
     public float GoalMoveSpeed = 0f;
+    [Tooltip("Horizontal / Vertical : GoalPos からの往復の幅 / Free : GoalPos を中心に動き回る円の半径")]
     public float GoalMoveRange = 0f;
-    public Vector2 GoalFreeDirection;
+    [Tooltip("Free のときの曲がる速さ（度/秒）。小さいほど大きく弧を描く")]
+    public float FreeTurnRate = 180f;
+    [Tooltip("Free のとき、目的地に着いたとみなす距離")]
+    public float FreeArriveDistance = 0.3f;
+    [Tooltip("Free のとき、目的地に着けなくても次の目的地に変える秒数")]
+    public float FreeRetargetTime = 4f;
 
     [Header("Rotate")]
     public Enum_RotateType GoalRotateType = Enum_RotateType.Constant;

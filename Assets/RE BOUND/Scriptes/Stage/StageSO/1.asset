@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d4311a6a84e81f4ebbb7777e50607da, type: 3}
   m_Name: 1
   m_EditorClassIdentifier: Assembly-CSharp::StageData
-  StageName: 1
+  StageName: "\u521D\u898B\u3054\u308D\u6C0F"
   StageID: 1
   StartPos: {x: -15, y: 0}
   GoalPos: {x: 15, y: 0}
@@ -25,6 +25,8 @@ MonoBehaviour:
   GoalMoveType: 0
   GoalMoveSpeed: 0
   GoalMoveRange: 0
-  GoalFreeDirection: {x: 0, y: 0}
+  FreeTurnRate: 180
+  FreeArriveDistance: 0.3
+  FreeRetargetTime: 4
   GoalRotateType: 0
   GoalRotateSpeed: 0

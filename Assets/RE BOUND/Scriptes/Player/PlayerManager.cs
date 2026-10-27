@@ -49,6 +49,9 @@ public class PlayerManager : MonoBehaviour
     private Coroutine _appearRoutine;
     private bool _isAppeared;
 
+    private Vector3 _baseScale;
+    private bool _isScaleCached;
+
     public void Initialize(StageData stageData)
     {
         NULLCHECK();
@@ -56,6 +59,12 @@ public class PlayerManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+        }
+
+        if (!_isScaleCached)
+        {
+            _baseScale = _playerMovement.transform.localScale;
+            _isScaleCached = true;
         }
 
         ChangeSprite(stageData.PlayerType);
@@ -89,6 +98,8 @@ public class PlayerManager : MonoBehaviour
 
         _isAppeared = false;
         _spriteRenderer.enabled = false;
+        // 出現アニメの途中で中断された場合の、大きさと向きを戻す
+        _playerMovement.transform.localScale = _baseScale;
         _playerMovement.BeginSceneTransition();
     }
 

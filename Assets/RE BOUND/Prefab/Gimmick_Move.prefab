@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 212014162615689749}
   - component: {fileID: 209560499457969476}
   - component: {fileID: -8415682617183932828}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Gimmick_Move
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,6 +160,9 @@ MonoBehaviour:
   _moveType: 0
   _moveSpeed: 3
   _moveRange: 5
+  _freeTurnRate: 180
+  _freeArriveDistance: 0.3
+  _freeRetargetTime: 4
   _freeDirection: {x: 0, y: 0}
 --- !u!114 &-8415682617183932828
 MonoBehaviour:

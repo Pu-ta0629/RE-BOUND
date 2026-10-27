@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageData
   StageName: 8
   StageID: 8
-  StartPos: {x: 12, y: 0}
-  GoalPos: {x: -12, y: 0}
-  SwipeLimit: 2
-  BounceLimit: 10
+  StartPos: {x: 16, y: 0}
+  GoalPos: {x: -16, y: 0}
+  SwipeLimit: 1
+  BounceLimit: 1
   PlayerType: 3
   MoveSpeed: 35
   RotationMode: 0
@@ -25,6 +25,8 @@ MonoBehaviour:
   GoalMoveType: 0
   GoalMoveSpeed: 0
   GoalMoveRange: 0
-  GoalFreeDirection: {x: 0, y: 0}
+  FreeTurnRate: 180
+  FreeArriveDistance: 0.3
+  FreeRetargetTime: 4
   GoalRotateType: 0
   GoalRotateSpeed: 0

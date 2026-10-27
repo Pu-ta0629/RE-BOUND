@@ -77,7 +77,6 @@ public class InputManager : MonoBehaviour
 
     private void Retry()
     {
-        AudioManager.Instance.Play(Enum_SEType.Retry);
         GameManager.Instance.ReloadStage();
     }
 }

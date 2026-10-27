@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d4311a6a84e81f4ebbb7777e50607da, type: 3}
+  m_Name: 14
+  m_EditorClassIdentifier: Assembly-CSharp::StageData
+  StageName: 14
+  StageID: 14
+  StartPos: {x: 16, y: -8}
+  GoalPos: {x: -8, y: 0}
+  SwipeLimit: 10
+  BounceLimit: 100
+  PlayerType: 0
+  MoveSpeed: 40
+  RotationMode: 0
+  RotateSpeed: 360
+  GoalMoveType: 0
+  GoalMoveSpeed: 0
+  GoalMoveRange: 0
+  FreeTurnRate: 180
+  FreeArriveDistance: 0.3
+  FreeRetargetTime: 4
+  GoalRotateType: 0
+  GoalRotateSpeed: 90

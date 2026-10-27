@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1695372054447368592}
   - component: {fileID: 6645878826966361777}
   - component: {fileID: 8861881060447742524}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Gimmick_Rotate
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -4,7 +4,6 @@ using UnityEngine;
 [RequireComponent(typeof(Gimmick_Rotate))]
 public class Gimmick_Goal : MonoBehaviour, IGimmick
 {
-
     private PolygonCollider2D _collider;
     private SpriteRenderer _spriteRenderer;
     private Gimmick_Move _move;
@@ -13,12 +12,8 @@ public class Gimmick_Goal : MonoBehaviour, IGimmick
     public void Initialize()
     {
         StageData stageData = StageManager.Instance.CurrentStageData;
-        Debug.Log(StageManager.Instance);
-        if (StageManager.Instance != null)
-        {
-            Debug.Log(StageManager.Instance.CurrentStageData);
-        }
-        transform.SetPositionAndRotation(StageManager.Instance.CurrentStageData.GoalPos, Quaternion.identity);
+
+        transform.SetPositionAndRotation(stageData.GoalPos, Quaternion.identity);
 
         _collider = GetComponent<PolygonCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -30,7 +25,7 @@ public class Gimmick_Goal : MonoBehaviour, IGimmick
         _collider.autoTiling = true;
         _collider.CreateFromSprite(_spriteRenderer.sprite);
 
-        _move.InitializeGoal(stageData.GoalMoveType, stageData.GoalMoveSpeed, stageData.GoalMoveRange, stageData.GoalFreeDirection);
+        _move.InitializeGoal(stageData.GoalMoveType, stageData.GoalMoveSpeed, stageData.GoalMoveRange, stageData.FreeTurnRate, stageData.FreeArriveDistance, stageData.FreeRetargetTime);
         _rotate.InitializeGoal(stageData.GoalRotateType, stageData.GoalRotateSpeed);
     }
 
@@ -40,25 +35,30 @@ public class Gimmick_Goal : MonoBehaviour, IGimmick
         {
             Debug.LogWarning($"{this.name} : PolygonCollider2D not found");
         }
+
         if (_spriteRenderer == null)
         {
             Debug.LogWarning($"{this.name} : SpriteRenderer not found");
         }
-        if(_move == null)
+
+        if (_move == null)
         {
             Debug.LogWarning($"{this.name} : Gimmick_Move not found");
         }
-        if(_rotate == null)
+
+        if (_rotate == null)
         {
             Debug.LogWarning($"{this.name} : Gimmick_Rotate not found");
         }
     }
+
     public void OnPlayerHit(PlayerMovement player)
     {
-        //StageProgressManager.Instance.NextStage();
         AudioManager.Instance.Play(Enum_SEType.StageClear);
         StageProgressManager.Instance.StageClear();
     }
-    public void OnPlayerMiss(PlayerMovement player){}
-    public void OnActiveEvent(){}
+
+    public void OnPlayerMiss(PlayerMovement player) { }
+
+    public void OnActiveEvent() { }
 }

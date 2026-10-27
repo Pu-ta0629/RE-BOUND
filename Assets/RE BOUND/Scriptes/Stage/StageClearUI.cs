@@ -13,6 +13,7 @@ public class StageClearUI : MonoBehaviour
     [SerializeField] private TMP_Text _stageText;
     [SerializeField] private StarDisplay _starDisplay;
     [SerializeField] private Button _nextButton;
+    [SerializeField] private Button _retryButton;
     [SerializeField] private TMP_Text _nextButtonLabel;
 
     [Header("Timing")]
@@ -26,6 +27,10 @@ public class StageClearUI : MonoBehaviour
     {
         _nextButton.onClick.RemoveAllListeners();
         _nextButton.onClick.AddListener(OnNextClicked);
+
+        _retryButton.onClick.RemoveAllListeners();
+        _retryButton.onClick.AddListener(GameManager.Instance.ButtonSE.ButtonClick);
+        _retryButton.onClick.AddListener(OnRetryClicked);
 
         Hide();
     }
@@ -43,6 +48,7 @@ public class StageClearUI : MonoBehaviour
         }
 
         _nextButton.gameObject.SetActive(false);
+        _retryButton.gameObject.SetActive(false);
 
         if (_routine != null) StopCoroutine(_routine);
         _routine = StartCoroutine(ShowRoutine(result));
@@ -68,6 +74,7 @@ public class StageClearUI : MonoBehaviour
         yield return new WaitForSecondsRealtime(_buttonDelay);
 
         _nextButton.gameObject.SetActive(true);
+        _retryButton.gameObject.SetActive(true);
         _routine = null;
     }
 
@@ -78,5 +85,12 @@ public class StageClearUI : MonoBehaviour
 
         Hide();
         onNext?.Invoke();
+    }
+    private void OnRetryClicked()
+    {
+        _onNext = null;
+
+        Hide();
+        GameManager.Instance.ReloadStage();
     }
 }

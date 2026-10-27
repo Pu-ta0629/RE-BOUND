@@ -19,9 +19,6 @@ public class Gimmick_Move : MonoBehaviour, IGimmick
     [Tooltip("Free のとき、目的地に着けなくても次の目的地に変える秒数")]
     [SerializeField] private float _freeRetargetTime = 4f;
 
-    // 旧: Free の方向指定。現在は使わない（Gimmick_Goal の呼び出し互換のために残している）
-    [HideInInspector, SerializeField] private Vector2 _freeDirection;
-
     private Vector2 _startPosition;
 
     private int _direction = 1;
@@ -50,12 +47,14 @@ public class Gimmick_Move : MonoBehaviour, IGimmick
         _collider.CreateFromSprite(_spriteRenderer.sprite);
     }
 
-    public void InitializeGoal(Enum_MoveType moveType, float moveSpeed, float moveRange, Vector2 freeDirection)
+    public void InitializeGoal(Enum_MoveType moveType, float moveSpeed, float moveRange, float freeTurnRate, float freeArriveDistance, float freeRetargetTime)
     {
         _moveType = moveType;
         _moveSpeed = moveSpeed;
         _moveRange = moveRange;
-        _freeDirection = freeDirection;
+        _freeTurnRate = freeTurnRate;
+        _freeArriveDistance = freeArriveDistance;
+        _freeRetargetTime = freeRetargetTime;
 
         _startPosition = transform.position;
         _direction = 1;

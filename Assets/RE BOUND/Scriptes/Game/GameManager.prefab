@@ -1094,7 +1094,7 @@ Transform:
   m_GameObject: {fileID: 1631851163046626351}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -14.742152, y: 0, z: 10}
+  m_LocalPosition: {x: -14.714442, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 18, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2509,7 +2509,7 @@ Transform:
   m_GameObject: {fileID: 3675921403415344077}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 14.742152, y: 0, z: 10}
+  m_LocalPosition: {x: 14.714442, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 18, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2676,7 +2676,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -8.5, z: 10}
-  m_LocalScale: {x: 30.484304, y: 1, z: 1}
+  m_LocalScale: {x: 30.428885, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1285023326167987639}
@@ -3068,7 +3068,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 8.5, z: 10}
-  m_LocalScale: {x: 30.484304, y: 1, z: 1}
+  m_LocalScale: {x: 30.428885, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1285023326167987639}
@@ -4539,11 +4539,13 @@ MonoBehaviour:
   _stageSelectGroup: {fileID: 8086822028676190460}
   _startGroup: {fileID: 2301298949010474874}
   _tutorialPanel: {fileID: 1168518986281211197}
-  _tutorialButton: {fileID: 7974068230259645027}
   _stageSelectButton: {fileID: 978133123415221129}
   _titleButton_InGame: {fileID: 7038480718412879510}
   _titleButton_StageSelect: {fileID: 1526969268512890337}
   _closeButton_Menu: {fileID: 0}
+  _retryButton_InGame: {fileID: 0}
+  _helpMark: {fileID: 0}
+  _helpPanel: {fileID: 0}
   _inGameTarget: {fileID: 0}
   _stageSelectTarget: {fileID: 0}
   _inGameToStageSelectClip: {fileID: 0}

@@ -55,7 +55,7 @@ public class Gimmick_BlackHole : MonoBehaviour, IGimmick
     [SerializeField] private float _particleLifetime = 1.3f;
     [SerializeField] private float _orbitSpeed = 1.5f;
 
-    private float _sign = 1f;
+    [SerializeField] private float _sign = 1f;
     private float _time;
     private float _pull;             
 
@@ -85,7 +85,7 @@ public class Gimmick_BlackHole : MonoBehaviour, IGimmick
 
         BuildCore();
 
-        _sign = 1f;
+        //_sign = 1f;
         _time = 0f;
         _pull = 0f;
         _playerRb = null;
