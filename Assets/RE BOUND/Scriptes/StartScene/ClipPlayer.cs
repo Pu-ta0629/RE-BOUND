@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
 
 /// <summary>
-/// AnimationClip を Animator なしで、コードから再生する。
-/// 毎フレーム「その時刻の値」を書き込むだけなので、Animatorのような状態の持ち越しが起きない。
-/// (StageClear の星の演出と同じ、コルーチンで動かす方式)
+/// AnimationClip を、AnimatorController なしで、コードから再生する。
+/// PlayableGraph で「その時刻の姿勢」を毎フレーム書き込むだけなので、Animator のような状態の持ち越しが起きない。
+/// （AnimationClip.SampleAnimation は、ビルドで動かない報告があるため、PlayableGraph に変更した）
 /// </summary>
 public static class ClipPlayer
 {
@@ -22,8 +24,14 @@ public static class ClipPlayer
         AnimationEvent[] events = fireEvents ? clip.events.OrderBy(e => e.time).ToArray() : null;
         int next = 0;
 
+        // Playable が勝手にイベントを呼ばないよう、イベントを外した複製を再生する（イベントは自分で呼ぶ）
+        AnimationClip playClip = Object.Instantiate(clip);
+        playClip.events = new AnimationEvent[0];
+
+        PlayableGraph graph = CreateGraph(target, playClip, out AnimationClipPlayable playable);
+
         // 開始の見た目はこの場で即反映する（1フレームも元の姿勢を見せない）
-        clip.SampleAnimation(target, 0f);
+        Evaluate(graph, playable, 0f);
 
         // イベントは次フレーム以降に発火する（呼び出し元の初期化が終わった後になる）
         yield return null;
@@ -37,14 +45,46 @@ public static class ClipPlayer
             bool finished = time >= length;
             float t = finished ? length : time;
 
-            clip.SampleAnimation(target, t);
+            Evaluate(graph, playable, t);
 
             if (events != null) next = FireEvents(target, events, next, t, finished);
 
-            if (finished) yield break;
+            if (finished) break;
 
             yield return null;
         }
+
+        if (graph.IsValid()) graph.Destroy();
+        Object.Destroy(playClip);
+    }
+
+    private static PlayableGraph CreateGraph(GameObject target, AnimationClip clip, out AnimationClipPlayable playable)
+    {
+        // クリップのパスは、Animator が付いているオブジェクトが基準になる
+        if (!target.TryGetComponent(out Animator animator)) animator = target.AddComponent<Animator>();
+
+        // コントローラーは使わない（残っていると、ステートマシンが値を上書きする）
+        animator.runtimeAnimatorController = null;
+        animator.applyRootMotion = false;
+        animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        animator.enabled = true;
+
+        PlayableGraph graph = PlayableGraph.Create("ClipPlayer");
+        graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
+
+        playable = AnimationClipPlayable.Create(graph, clip);
+        playable.SetApplyFootIK(false);
+
+        AnimationPlayableOutput output = AnimationPlayableOutput.Create(graph, "ClipPlayer", animator);
+        output.SetSourcePlayable(playable);
+
+        return graph;
+    }
+
+    private static void Evaluate(PlayableGraph graph, AnimationClipPlayable playable, float time)
+    {
+        playable.SetTime(time);
+        graph.Evaluate();
     }
 
     private static int FireEvents(GameObject target, AnimationEvent[] events, int next, float time, bool all)
